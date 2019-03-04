@@ -140,7 +140,7 @@ namespace SetACLs.Business
 
 				TreeNodeCollection prevNode = null;
 
-				for (var colDepth = 0; colDepth < FolderDepth;)
+				for (var colDepth = 0; colDepth < FolderDepth && colDepth >= 0;)
 				{
 					var folderName = worksheet.Cells[fromRow, startCol + colDepth].GetValue<string>();
 

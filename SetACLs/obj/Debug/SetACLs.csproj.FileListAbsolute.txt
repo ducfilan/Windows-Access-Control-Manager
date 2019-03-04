@@ -22,3 +22,16 @@ C:\Users\DucHN3\documents\visual studio 2015\Projects\SetACLs\SetACLs\bin\Debug\
 \\Mac\Home\Desktop\SetACLs\SetACLs\obj\Debug\SetACLs.exe
 \\Mac\Home\Desktop\SetACLs\SetACLs\obj\Debug\SetACLs.pdb
 C:\Users\DucHN3\documents\visual studio 2015\Projects\SetACLs\SetACLs\obj\Debug\SetACLs.csproj.Fody.CopyLocal.cache
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\bin\Debug\SetACLs.exe.config
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\bin\Debug\SetACLs.exe
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\bin\Debug\SetACLs.pdb
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\bin\Debug\EPPlus.xml
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Debug\SetACLs.csprojAssemblyReference.cache
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Debug\SetACLs.FormMain.resources
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Debug\SetACLs.Properties.Resources.resources
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Debug\SetACLs.csproj.GenerateResource.cache
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Debug\SetACLs.csproj.CoreCompileInputs.cache
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Debug\SetACLs.csproj.Fody.CopyLocal.cache
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Debug\SetACLs.csproj.CopyComplete
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Debug\SetACLs.exe
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Debug\SetACLs.pdb

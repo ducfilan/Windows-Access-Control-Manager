@@ -21,3 +21,16 @@ C:\Users\DucHN3\documents\visual studio 2015\Projects\SetACLs\SetACLs\obj\Releas
 C:\Users\DucHN3\documents\visual studio 2015\Projects\SetACLs\SetACLs\obj\Release\SetACLs.csproj.GenerateResource.Cache
 C:\Users\DucHN3\documents\visual studio 2015\Projects\SetACLs\SetACLs\obj\Release\SetACLs.csprojResolveAssemblyReference.cache
 C:\Users\DucHN3\documents\visual studio 2015\Projects\SetACLs\SetACLs\obj\Release\SetACLs.csproj.Fody.CopyLocal.cache
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\bin\Release\SetACLs.exe.config
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\bin\Release\SetACLs.exe
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\bin\Release\SetACLs.pdb
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\bin\Release\EPPlus.xml
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Release\SetACLs.csprojAssemblyReference.cache
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Release\SetACLs.FormMain.resources
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Release\SetACLs.Properties.Resources.resources
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Release\SetACLs.csproj.GenerateResource.cache
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Release\SetACLs.csproj.CoreCompileInputs.cache
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Release\SetACLs.csproj.Fody.CopyLocal.cache
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Release\SetACLs.csproj.CopyComplete
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Release\SetACLs.exe
+\\Mac\Home\Desktop\Windows-Access-Control-Manager\SetACLs\obj\Release\SetACLs.pdb
