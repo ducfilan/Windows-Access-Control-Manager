@@ -4,7 +4,6 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using SetACLs.Const;
 using SetACLs.Model;
 
@@ -24,9 +23,13 @@ namespace SetACLs.Business
 					var fileSystemRights = Permissions.Instance.All[permission.Permission].Item1;
 					var accessControlType = Permissions.Instance.All[permission.Permission].Item2;
 
-					var info = new DirectoryInfo(folderPath);
+                    var info = new DirectoryInfo(folderPath);
 					var accessControl = info.GetAccessControl();
-					accessControl.AddAccessRule(new FileSystemAccessRule(
+
+                    accessControl = RemoveExplicitSecurity(accessControl);
+                    Directory.SetAccessControl(folderPath, accessControl);
+
+                    accessControl.AddAccessRule(new FileSystemAccessRule(
 						domain + @"\" + username,
 						fileSystemRights,
 						InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
@@ -43,5 +46,14 @@ namespace SetACLs.Business
 				}
 			}
 		}
-	}
+
+        private static DirectorySecurity RemoveExplicitSecurity(DirectorySecurity directorySecurity)
+        {
+            var rules = directorySecurity.GetAccessRules(true, false, typeof(NTAccount));
+            foreach (FileSystemAccessRule rule in rules)
+                directorySecurity.RemoveAccessRule(rule);
+            return directorySecurity;
+        }
+
+    }
 }

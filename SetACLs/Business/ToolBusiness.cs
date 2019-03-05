@@ -136,36 +136,39 @@ namespace SetACLs.Business
 				var fromRow = 3;
 				const int startCol = 1;
 				var isShiftedLevel = false;
-				var currentNodeChildren = rootTreeNode.Nodes;
-
-				TreeNodeCollection prevNode = null;
+				var currentNode = rootTreeNode;
 
 				for (var colDepth = 0; colDepth < FolderDepth && colDepth >= 0;)
 				{
 					var folderName = worksheet.Cells[fromRow, startCol + colDepth].GetValue<string>();
 
-					if (string.IsNullOrWhiteSpace(folderName))
-					{
-						if (isShiftedLevel)
-						{
-							colDepth -= 2;
-							isShiftedLevel = false;
-							currentNodeChildren = prevNode[0].Parent.Parent.Nodes;
-							fromRow++;
-							continue;
-						}
+                    if (isShiftedLevel)
+                    {
+                        if (!string.IsNullOrWhiteSpace(folderName))
+                        {
+                            isShiftedLevel = false;
+                            continue;
+                        }
+                        colDepth--;
+                        currentNode = currentNode.Parent;
+                        continue;
+                    }
 
-						colDepth++;
-						prevNode = currentNodeChildren;
-						currentNodeChildren = currentNodeChildren[currentNodeChildren.Count - 1].Nodes;
+                    if (string.IsNullOrWhiteSpace(folderName))
+                    {
+                        currentNode = currentNode.Nodes[currentNode.Nodes.Count - 1];
 						isShiftedLevel = true;
-						continue;
+                        colDepth++;
+                        if (colDepth == FolderDepth)
+                        {
+                            colDepth--;
+                            currentNode = currentNode.Parent;
+                        }
+                        continue;
 					}
 
-					isShiftedLevel = false;
-
-					var nodeKey = string.Empty + fromRow + string.Empty + (startCol + colDepth);
-					currentNodeChildren.Add(nodeKey, folderName);
+                    var nodeKey = string.Empty + fromRow + string.Empty + (startCol + colDepth);
+					currentNode.Nodes.Add(nodeKey, folderName);
 
 					var userPermissionList = usernames
 						.Select((u, i) => new { Index = i, UserName = u })
