@@ -82,8 +82,10 @@ namespace SetACLs.Business
 
         public void SetPermission(string path, string domain, TreeNodeCollection importedRootNodeChildren,
 			List<FolderPermission> importedFolderPermissions)
-		{
-			foreach (TreeNode node in importedRootNodeChildren)
+        {
+            _permissionManipulator.EvictAllRightsFromDomainUsers(path, domain);
+
+            foreach (TreeNode node in importedRootNodeChildren)
 			{
 				var currentFolderPermissions = importedFolderPermissions.First(p => p.NodeKey == node.Name);
 

@@ -134,7 +134,8 @@ namespace SetACLs
                 .Select(p => new UserPermission
                 {
                     Username = p.Username,
-                    Permission = p.Permission
+                    Permission = p.Permission,
+                    AccessType = p.Permission.StartsWith("D") ? "Deny" : "Allow"
                 }).ToList());
             dgvImportedPermission.DataSource = list;
         }

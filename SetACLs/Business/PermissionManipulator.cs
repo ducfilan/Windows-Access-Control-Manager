@@ -23,11 +23,8 @@ namespace SetACLs.Business
 					var fileSystemRights = Permissions.Instance.All[permission.Permission].Item1;
 					var accessControlType = Permissions.Instance.All[permission.Permission].Item2;
 
-                    var info = new DirectoryInfo(folderPath);
+					var info = new DirectoryInfo(folderPath);
 					var accessControl = info.GetAccessControl();
-
-                    accessControl = RemoveExplicitSecurity(accessControl);
-                    Directory.SetAccessControl(folderPath, accessControl);
 
                     accessControl.AddAccessRule(new FileSystemAccessRule(
 						domain + @"\" + username,
@@ -47,13 +44,26 @@ namespace SetACLs.Business
 			}
 		}
 
-        private static DirectorySecurity RemoveExplicitSecurity(DirectorySecurity directorySecurity)
+        public void EvictAllRightsFromDomainUsers(string basePath, string domain)
         {
-            var rules = directorySecurity.GetAccessRules(true, false, typeof(NTAccount));
-            foreach (FileSystemAccessRule rule in rules)
-                directorySecurity.RemoveAccessRule(rule);
-            return directorySecurity;
-        }
+            foreach (var info in new DirectoryInfo(basePath).GetDirectories())
+            {
+                var accessControl = info.GetAccessControl();
 
+                var accessRules = accessControl.GetAccessRules(true, false, typeof(NTAccount));
+
+                foreach (FileSystemAccessRule accessRule in accessRules)
+                {
+                    if (string.IsNullOrWhiteSpace(domain) || !accessRule.IdentityReference.Value.StartsWith(domain)) continue;
+
+                    accessControl.RemoveAccessRule(accessRule);
+                    accessControl.SetAccessRuleProtection(true, false);
+                }
+
+                info.SetAccessControl(accessControl);
+
+                EvictAllRightsFromDomainUsers(info.FullName, domain);
+            }
+        }
     }
 }
