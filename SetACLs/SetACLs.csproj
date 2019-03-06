@@ -124,11 +124,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Model\App.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
