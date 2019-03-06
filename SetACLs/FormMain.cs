@@ -118,7 +118,7 @@ namespace SetACLs
 
 		private void trvFolderTree_AfterSelect(object sender, TreeViewEventArgs e)
 		{
-			var permissions = _toolBusiness.GetPermissionsCurrentFolder(txtFolderPath.Text + @"\" + e.Node.FullPath, txtDomain.Text);
+			var permissions = PermissionManipulator.GetPermissionsCurrentFolder(txtFolderPath.Text + @"\" + e.Node.FullPath, txtDomain.Text);
 
 			var list = new BindingList<UserPermission>(permissions.Select(p => new UserPermission
 			{
@@ -177,7 +177,7 @@ namespace SetACLs
 
 			try
 			{
-				_toolBusiness.SetPermission(txtFolderPath.Text, txtDomain.Text, ImportedRootNodeChildren, ImportedFolderPermissions);
+				_toolBusiness.ApplyPermissionFromImportedTemplate(txtFolderPath.Text, txtDomain.Text, ImportedRootNodeChildren, ImportedFolderPermissions);
 
 				_formManipulator.ShowInformation("Permissions are successfully set!");
 			}

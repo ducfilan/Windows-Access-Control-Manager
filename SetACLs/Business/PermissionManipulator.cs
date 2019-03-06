@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
@@ -11,7 +12,7 @@ namespace SetACLs.Business
 {
 	public class PermissionManipulator
 	{
-		public AuthorizationRuleCollection GetDirectorySecurity(string path) =>
+		public static AuthorizationRuleCollection GetDirectorySecurity(string path) =>
 			new DirectoryInfo(path).GetAccessControl().GetAccessRules(true, true, typeof(NTAccount));
 
 		public void AssignPermission(string folderPath, string domain, UserPermission permission)
@@ -67,6 +68,13 @@ namespace SetACLs.Business
 
                 EvictAllRightsFromDomainUsers(info.FullName, domain);
             }
+        }
+
+        public static IEnumerable<FileSystemAccessRule> GetPermissionsCurrentFolder(string path, string domain)
+        {
+            return GetDirectorySecurity(path).Cast<FileSystemAccessRule>()
+                .Where(p => string.IsNullOrEmpty(domain) ||
+                            p.IdentityReference.Value.StartsWith(domain));
         }
     }
 }
