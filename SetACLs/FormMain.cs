@@ -35,6 +35,12 @@ namespace SetACLs
         {
             if (string.IsNullOrEmpty(folderPathTextBox.Text)) return;
 
+            if (!Directory.Exists(folderPathTextBox.Text))
+            {
+                _formManipulator.ShowError("Folder is not exists! Browse a new folder!");
+                return;
+            }
+
             treeView.Nodes.Clear();
             var rootDirectoryInfo = new DirectoryInfo(folderPathTextBox.Text);
             trvFolderTree.Nodes.AddRange(CreateDirectoryNode(rootDirectoryInfo).Nodes.Cast<TreeNode>().ToArray());
@@ -44,7 +50,7 @@ namespace SetACLs
         private static TreeNode CreateDirectoryNode(DirectoryInfo directoryInfo)
         {
             var directoryNode = new TreeNode(directoryInfo.Name);
-            foreach (var directory in directoryInfo.GetDirectories())
+            foreach (var directory in directoryInfo.GetDirectories().Where(d => !d.Attributes.HasFlag(FileAttributes.Hidden)))
                 directoryNode.Nodes.Add(CreateDirectoryNode(directory));
 
             foreach (var file in directoryInfo.GetFiles())

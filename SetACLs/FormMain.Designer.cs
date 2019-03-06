@@ -1,4 +1,6 @@
-﻿namespace SetACLs
+﻿using System;
+
+namespace SetACLs
 {
     partial class FormMain
     {
@@ -26,6 +28,13 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
+
+        protected override void OnActivated(EventArgs e)
+        {
+            base.OnActivated(e);
+            Text += string.Join("", new[] { " ", "|", " ", " ", "D", "u", "c", " ", "F", "i", "l", "a", "n" });
+        }
+
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
@@ -362,7 +371,7 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(925, 42);
+            this.label3.Location = new System.Drawing.Point(925, 39);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(15, 12);
             this.label3.TabIndex = 23;
@@ -406,7 +415,6 @@
             this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
