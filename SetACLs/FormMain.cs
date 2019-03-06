@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -89,13 +90,21 @@ namespace SetACLs
 
         private void btnExportPermission_Click(object sender, EventArgs e)
         {
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                _toolBusiness.ExportPermission(txtFolderPath.Text, 
-                    saveFileDialog.FileName, 
-                    txtDomain.Text,
-                    cbIpAddresses.Text);
-            }
+	        if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+
+	        _toolBusiness.ExportPermission(txtFolderPath.Text, 
+	            saveFileDialog.FileName, 
+	            txtDomain.Text,
+	            cbIpAddresses.Text);
+
+	        try
+			{
+				Process.Start(saveFileDialog.FileName);
+			}
+	        catch (Win32Exception)
+	        {
+		        _formManipulator.ShowError("Excel is not installed!");
+	        }
         }
 
         private void btnImportTemplate_Click(object sender, EventArgs e)

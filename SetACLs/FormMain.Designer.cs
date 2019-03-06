@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace SetACLs
 {
@@ -24,16 +24,12 @@ namespace SetACLs
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-
-        protected override void OnActivated(EventArgs e)
+        protected override void OnLoad(EventArgs e)
         {
-            base.OnActivated(e);
-            Text += string.Join("", new[] { " ", "|", " ", " ", "D", "u", "c", " ", "F", "i", "l", "a", "n" });
-        }
+	        base.OnLoad(e);
+
+	        Text += string.Join("", new[] { " ", "|", " ", " ", "D", "u", "c", " ", "F", "i", "l", "a", "n" });
+		}
 
         private void InitializeComponent()
         {

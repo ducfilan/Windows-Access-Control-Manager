@@ -53,8 +53,6 @@ namespace SetACLs.Business
 
 				excel.SaveAs(new FileInfo(fileNameFullPath));
 			}
-
-			Process.Start(fileNameFullPath);
         }
 
         public Tuple<TreeNodeCollection, List<FolderPermission>> ImportTemplate(string templatePath = null)
