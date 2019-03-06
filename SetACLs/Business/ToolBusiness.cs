@@ -13,7 +13,7 @@ using SetACLs.Model;
 
 namespace SetACLs.Business
 {
-	class ToolBusiness
+	public class ToolBusiness
 	{
 		public string TemplatePath { get; set; }
 		private readonly PermissionManipulator _permissionManipulator;
@@ -25,7 +25,7 @@ namespace SetACLs.Business
 
 		public int FolderDepth { get; set; }
 
-		internal void ExportPermission(string permissionToCheckRootPath, string fileNameFullPath, string domain)
+		internal void ExportPermission(string permissionToCheckRootPath, string fileNameFullPath, string domain, string serverIpAddress)
 		{
 			using (var excel = new ExcelPackage())
 			{
@@ -35,26 +35,47 @@ namespace SetACLs.Business
                 var addedRowsCountToPrint = 0;
                 foreach (var item in GetPermissionsSubFolders(permissionToCheckRootPath, domain).Select((p, i) => new {Index = i + 1, Permissions = p}))
                 {
-                    ws.Cells["A" + (item.Index + addedRowsCountToPrint + (isHeaderPrinted ? 0 : 1))].Value = item.Permissions.Key;
-                    ws.Cells["B" + (item.Index + addedRowsCountToPrint)].LoadFromCollection(item.Permissions.Value, !isHeaderPrinted);
+                    var outputServerPath = item.Permissions.Key.Replace(permissionToCheckRootPath, @"\\" + serverIpAddress);
+
+                    var rowToFillFolderInfo = item.Index + addedRowsCountToPrint + (isHeaderPrinted ? 0 : 1);
+
+                    ws.Cells["A" + rowToFillFolderInfo].Value = outputServerPath;
+
+                    FillFolderSize(ws, "B",rowToFillFolderInfo, item.Permissions.Key);
+
+                    ws.Cells["C" + (item.Index + addedRowsCountToPrint)].LoadFromCollection(item.Permissions.Value, !isHeaderPrinted);
                     addedRowsCountToPrint += item.Permissions.Value.Count() + (isHeaderPrinted ? 0 : 1);
 
                     isHeaderPrinted = true;
                 }
 				ws.Cells.AutoFitColumns(0);
 
-				using (var range = ws.Cells[1, 1, 1, 7])
-				{
-					range.Style.Font.Bold = true;
-					range.Style.Fill.PatternType = ExcelFillStyle.Solid;
-					range.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
-					range.Style.Font.Color.SetColor(Color.White);
-				}
+				FormatExcelHeader(ws);
 
 				excel.SaveAs(new FileInfo(fileNameFullPath));
 			}
 
 			Process.Start(fileNameFullPath);
+        }
+
+        private static void FormatExcelHeader(ExcelWorksheet ws)
+        {
+            using (var range = ws.Cells[1, 1, 1, 8])
+            {
+                range.Style.Font.Bold = true;
+                range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
+                range.Style.Font.Color.SetColor(Color.White);
+            }
+        }
+
+        private static void FillFolderSize(ExcelWorksheet ws, string colToFillFolderInfo, int rowToFillFolderInfo, string path)
+        {
+            var fileSize_KB = DirectoryInfoExtractor.DirectorySize_Byte(path) / 1024;
+
+            ws.Cells[colToFillFolderInfo + 1].Value = "File size (KB)";
+            ws.Cells[colToFillFolderInfo + rowToFillFolderInfo].Value = fileSize_KB;
+            ws.Cells[colToFillFolderInfo + rowToFillFolderInfo].Style.Numberformat.Format = "#,##0.00";
         }
 
         public IEnumerable<FileSystemAccessRule> GetPermissionsCurrentFolder(string path, string domain)

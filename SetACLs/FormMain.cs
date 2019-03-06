@@ -64,8 +64,16 @@ namespace SetACLs
             };
 
             _formManipulator = new FormManipulator();
-
             PopulateFolderTree(trvFolderTree, txtFolderPath);
+
+            var ipAddresses = NetworkInfoExtractor.GetLocalIpAddress();
+            PopulateComboBox(cbIpAddresses, ipAddresses, Properties.Settings.Default.IpAddress);
+        }
+
+        private void PopulateComboBox(ComboBox comboBox, IEnumerable<string> items, string selectedItemText = null)
+        {
+            comboBox.Items.AddRange(items.ToArray<object>());
+            comboBox.SelectedText = selectedItemText;
         }
 
         private void btnRefreshFolder_Click(object sender, EventArgs e)
@@ -79,14 +87,9 @@ namespace SetACLs
             {
                 _toolBusiness.ExportPermission(txtFolderPath.Text, 
                     saveFileDialog.FileName, 
-                    txtDomain.Text);
+                    txtDomain.Text,
+                    cbIpAddresses.Text);
             }
-        }
-
-        private void txtDomain_TextChanged(object sender, EventArgs e)
-        {
-            Properties.Settings.Default.Domain = txtDomain.Text;
-            Properties.Settings.Default.Save();
         }
 
         private void btnImportTemplate_Click(object sender, EventArgs e)
@@ -181,12 +184,24 @@ namespace SetACLs
 			catch(Exception ex)
             {
                 _formManipulator.ShowError(ex.Message);
-;			}
+			}
 		}
 
 		private void BtnHelp_Click(object sender, EventArgs e)
 		{
 			_formManipulator.ShowInformation("Access rights manipulator by Duc Filan!");
 		}
-	}
+
+        private void btnSetDomain_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Domain = txtDomain.Text;
+            Properties.Settings.Default.Save();
+        }
+
+        private void cbIpAddresses_SelectedValueChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.IpAddress = cbIpAddresses.SelectedItem.ToString();
+            Properties.Settings.Default.Save();
+        }
+    }
 }

@@ -55,6 +55,9 @@
             this.btnCreateFolderTree = new System.Windows.Forms.Button();
             this.btnAssignPermission = new System.Windows.Forms.Button();
             this.btnHelp = new System.Windows.Forms.Button();
+            this.btnSetDomain = new System.Windows.Forms.Button();
+            this.cbIpAddresses = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -110,7 +113,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(807, 13);
+            this.label1.Location = new System.Drawing.Point(897, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(43, 12);
             this.label1.TabIndex = 8;
@@ -119,11 +122,10 @@
             // txtDomain
             // 
             this.txtDomain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtDomain.Location = new System.Drawing.Point(856, 10);
+            this.txtDomain.Location = new System.Drawing.Point(946, 10);
             this.txtDomain.Name = "txtDomain";
             this.txtDomain.Size = new System.Drawing.Size(218, 19);
             this.txtDomain.TabIndex = 7;
-            this.txtDomain.TextChanged += new System.EventHandler(this.txtDomain_TextChanged);
             // 
             // trvFolderTree
             // 
@@ -253,10 +255,11 @@
             // 
             // btnExportPermission
             // 
-            this.btnExportPermission.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExportPermission.Location = new System.Drawing.Point(1080, 8);
+            this.btnExportPermission.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnExportPermission.Font = new System.Drawing.Font("MS UI Gothic", 11.25F);
+            this.btnExportPermission.Location = new System.Drawing.Point(12, 557);
             this.btnExportPermission.Name = "btnExportPermission";
-            this.btnExportPermission.Size = new System.Drawing.Size(119, 23);
+            this.btnExportPermission.Size = new System.Drawing.Size(140, 35);
             this.btnExportPermission.TabIndex = 11;
             this.btnExportPermission.Text = "Export permission";
             this.btnExportPermission.UseVisualStyleBackColor = true;
@@ -290,11 +293,11 @@
             // 
             // btnCreateFolderTree
             // 
-            this.btnCreateFolderTree.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnCreateFolderTree.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCreateFolderTree.BackColor = System.Drawing.Color.Red;
             this.btnCreateFolderTree.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.btnCreateFolderTree.ForeColor = System.Drawing.Color.White;
-            this.btnCreateFolderTree.Location = new System.Drawing.Point(12, 557);
+            this.btnCreateFolderTree.Location = new System.Drawing.Point(878, 557);
             this.btnCreateFolderTree.Name = "btnCreateFolderTree";
             this.btnCreateFolderTree.Size = new System.Drawing.Size(140, 35);
             this.btnCreateFolderTree.TabIndex = 18;
@@ -304,11 +307,11 @@
             // 
             // btnAssignPermission
             // 
-            this.btnAssignPermission.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnAssignPermission.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAssignPermission.BackColor = System.Drawing.Color.Red;
             this.btnAssignPermission.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.btnAssignPermission.ForeColor = System.Drawing.Color.White;
-            this.btnAssignPermission.Location = new System.Drawing.Point(158, 557);
+            this.btnAssignPermission.Location = new System.Drawing.Point(1024, 557);
             this.btnAssignPermission.Name = "btnAssignPermission";
             this.btnAssignPermission.Size = new System.Drawing.Size(140, 35);
             this.btnAssignPermission.TabIndex = 19;
@@ -334,11 +337,46 @@
             this.btnHelp.UseVisualStyleBackColor = false;
             this.btnHelp.Click += new System.EventHandler(this.BtnHelp_Click);
             // 
+            // btnSetDomain
+            // 
+            this.btnSetDomain.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSetDomain.Location = new System.Drawing.Point(1170, 8);
+            this.btnSetDomain.Name = "btnSetDomain";
+            this.btnSetDomain.Size = new System.Drawing.Size(32, 23);
+            this.btnSetDomain.TabIndex = 21;
+            this.btnSetDomain.Text = "Set";
+            this.btnSetDomain.UseVisualStyleBackColor = true;
+            this.btnSetDomain.Click += new System.EventHandler(this.btnSetDomain_Click);
+            // 
+            // cbIpAddresses
+            // 
+            this.cbIpAddresses.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbIpAddresses.FormattingEnabled = true;
+            this.cbIpAddresses.Location = new System.Drawing.Point(946, 35);
+            this.cbIpAddresses.Name = "cbIpAddresses";
+            this.cbIpAddresses.Size = new System.Drawing.Size(218, 20);
+            this.cbIpAddresses.TabIndex = 22;
+            this.cbIpAddresses.SelectedValueChanged += new System.EventHandler(this.cbIpAddresses_SelectedValueChanged);
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(925, 42);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(15, 12);
+            this.label3.TabIndex = 23;
+            this.label3.Text = "IP";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1214, 595);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.cbIpAddresses);
+            this.Controls.Add(this.btnSetDomain);
+            this.Controls.Add(this.btnExportPermission);
             this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.btnAssignPermission);
             this.Controls.Add(this.btnCreateFolderTree);
@@ -346,7 +384,6 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtTemplatePath);
             this.Controls.Add(this.btnImportTemplate);
-            this.Controls.Add(this.btnExportPermission);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtDomain);
@@ -399,5 +436,8 @@
         private System.Windows.Forms.Button btnCreateFolderTree;
         private System.Windows.Forms.Button btnAssignPermission;
 		private System.Windows.Forms.Button btnHelp;
-	}
+        private System.Windows.Forms.Button btnSetDomain;
+        private System.Windows.Forms.ComboBox cbIpAddresses;
+        private System.Windows.Forms.Label label3;
+    }
 }

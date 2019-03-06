@@ -7,7 +7,7 @@ namespace SetACLs.Business
         public DialogResult ShowWarning(string message)
         {
             return MessageBox.Show(message,
-                "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
         }
 
         public void ShowInformation(string message)

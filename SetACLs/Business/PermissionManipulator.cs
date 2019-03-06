@@ -36,10 +36,11 @@ namespace SetACLs.Business
 				}
 				catch
 				{
-					throw new Exception("Your template's data may have been wrong! Check the parameters: \n+ Username: {" + username +
+					throw new Exception("Your template's data may have been wrong! Check the parameters:" + 
+                                        " \n+ Username:   {" + username +
                                         "}\n+ Permission: {" + permission.Permission +
-                                        "}\n+ Domain: {" + domain + 
-                                        "}\n+ Folder: {" + folderPath + "}");
+                                        "}\n+ Domain:     {" + domain + 
+                                        "}\n+ Folder:     {" + folderPath + "}");
 				}
 			}
 		}
@@ -49,15 +50,17 @@ namespace SetACLs.Business
             foreach (var info in new DirectoryInfo(basePath).GetDirectories())
             {
                 var accessControl = info.GetAccessControl();
-
                 var accessRules = accessControl.GetAccessRules(true, false, typeof(NTAccount));
 
                 foreach (FileSystemAccessRule accessRule in accessRules)
                 {
-                    if (string.IsNullOrWhiteSpace(domain) || !accessRule.IdentityReference.Value.StartsWith(domain)) continue;
+                    if (string.IsNullOrWhiteSpace(domain) || !accessRule.IdentityReference.Value.StartsWith(domain))
+                    {
+                        continue;
+                    }
 
                     accessControl.RemoveAccessRule(accessRule);
-                    accessControl.SetAccessRuleProtection(true, false);
+                    accessControl.SetAccessRuleProtection(true, true);
                 }
 
                 info.SetAccessControl(accessControl);
