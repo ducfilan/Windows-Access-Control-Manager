@@ -12,8 +12,21 @@ namespace SetACLs.Business
 {
 	public class PermissionManipulator
 	{
-		public static AuthorizationRuleCollection GetDirectorySecurity(string path) =>
-			new DirectoryInfo(path).GetAccessControl().GetAccessRules(true, true, typeof(NTAccount));
+		public static AuthorizationRuleCollection GetDirectorySecurity(string path)
+        {
+            try
+            {
+                return new DirectoryInfo(path)
+                    .GetAccessControl()
+                    .GetAccessRules(true, true, typeof(NTAccount));
+            }
+            catch (UnauthorizedAccessException )
+            {
+                // Ignore.
+            }
+
+            return null;
+        }
 
 		public void AssignPermission(string folderPath, string domain, UserPermission permission)
 		{
@@ -72,7 +85,7 @@ namespace SetACLs.Business
 
         public static IEnumerable<FileSystemAccessRule> GetPermissionsCurrentFolder(string path, string domain)
         {
-            return GetDirectorySecurity(path).Cast<FileSystemAccessRule>()
+            return GetDirectorySecurity(path)?.Cast<FileSystemAccessRule>()
                 .Where(p => string.IsNullOrEmpty(domain) ||
                             p.IdentityReference.Value.StartsWith(domain));
         }

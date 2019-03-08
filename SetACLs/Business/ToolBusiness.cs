@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -9,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using SetACLs.Const;
 using SetACLs.Model;
 
 namespace SetACLs.Business
@@ -175,7 +175,7 @@ namespace SetACLs.Business
 
         private static void FormatExcelHeader(ExcelWorksheet ws)
         {
-            using (var range = ws.Cells[1, 1, 1, 8])
+            using (var range = ws.Cells[1, 1, 1, 4])
             {
                 range.Style.Font.Bold = true;
                 range.Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -186,27 +186,46 @@ namespace SetACLs.Business
 
         private static void FillFolderSize(ExcelWorksheet ws, string colToFillFolderInfo, int rowToFillFolderInfo, string path)
         {
-            var fileSize_KB = DirectoryInfoExtractor.DirectorySize_Byte(path) / 1024;
+            var fileSize_GB = DirectoryInfoExtractor.DirectorySize_Byte(path) / Math.Pow(1024, 3);
 
-            ws.Cells[colToFillFolderInfo + 1].Value = "File size (KB)";
-            ws.Cells[colToFillFolderInfo + rowToFillFolderInfo].Value = fileSize_KB;
+            ws.Cells[colToFillFolderInfo + 1].Value = "File size (GB)";
+            ws.Cells[colToFillFolderInfo + rowToFillFolderInfo].Value = fileSize_GB;
             ws.Cells[colToFillFolderInfo + rowToFillFolderInfo].Style.Numberformat.Format = "#,##0.00";
         }
 
-        private IEnumerable<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>> GetPermissionsSubFolders(string parentPath, string domain)
+        private IEnumerable<KeyValuePair<string, IEnumerable<ExportInfo>>> GetPermissionsSubFolders(string parentPath, string domain)
         {
-            var allFoldersPermissions = new List<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>>();
+            var allFoldersPermissions = new List<KeyValuePair<string, IEnumerable<ExportInfo>>>();
 
             foreach (var item in Directory.GetDirectories(parentPath)
                 .Select((d, i) => new { Index = i, SubDirectory = d }))
             {
                 var subDirectory = item.SubDirectory;
-                allFoldersPermissions.Add(new KeyValuePair<string, IEnumerable<FileSystemAccessRule>>(subDirectory,
-                    PermissionManipulator.GetPermissionsCurrentFolder(subDirectory, domain)));
+
+                var currentFolderPermissions = PermissionManipulator
+                    .GetPermissionsCurrentFolder(subDirectory, domain)
+                    .Select(ToExportInfo);
+
+                allFoldersPermissions.Add(new KeyValuePair<string, IEnumerable<ExportInfo>>(subDirectory, currentFolderPermissions));
                 allFoldersPermissions.AddRange(GetPermissionsSubFolders(subDirectory, domain));
             }
 
             return allFoldersPermissions;
+        }
+
+        public ExportInfo ToExportInfo(FileSystemAccessRule rule)
+        {
+            return new ExportInfo
+            {
+                Account = Regex.Replace(rule.IdentityReference.Value, @"^.*?[/\\]", string.Empty),
+                Rights = (rule.FileSystemRights & Permissions.Instance.All["N"].Item1) == Permissions.Instance.All["N"].Item1 &&
+                         rule.AccessControlType == AccessControlType.Deny ? "N" :
+                    (rule.AccessControlType == AccessControlType.Allow ? string.Empty : "D") + 
+                    (
+                        (rule.FileSystemRights & Permissions.Instance.All["M"].Item1) == Permissions.Instance.All["M"].Item1 ? "M" : 
+                        (rule.FileSystemRights & Permissions.Instance.All["R"].Item1) == Permissions.Instance.All["R"].Item1 ? "R" : "N/A"
+                    )
+            };
         }
 
         private void SetIndividualPermission(string folderPath, string domain, FolderPermission permissions)

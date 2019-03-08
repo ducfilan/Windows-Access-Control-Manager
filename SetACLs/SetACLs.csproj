@@ -86,6 +86,7 @@
     <Compile Include="Business\NetworkInfoExtractor.cs" />
     <Compile Include="Business\PermissionManipulator.cs" />
     <Compile Include="Const\Permissions.cs" />
+    <Compile Include="Model\ExportInfo.cs" />
     <Compile Include="Model\FolderPermission.cs" />
     <Compile Include="Model\UserPermission.cs" />
     <Compile Include="Business\ToolBusiness.cs" />
