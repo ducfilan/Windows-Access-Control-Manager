@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Windows.Forms;
 using SetACLs.Business;
 using SetACLs.Model;
@@ -51,11 +52,21 @@ namespace SetACLs
         private static TreeNode CreateDirectoryNode(DirectoryInfo directoryInfo)
         {
             var directoryNode = new TreeNode(directoryInfo.Name);
-            foreach (var directory in directoryInfo.GetDirectories().Where(d => !d.Attributes.HasFlag(FileAttributes.Hidden)))
-                directoryNode.Nodes.Add(CreateDirectoryNode(directory));
 
-            foreach (var file in directoryInfo.GetFiles())
-                directoryNode.Nodes.Add(new TreeNode(file.Name));
+            try
+            {
+                foreach (var directory in directoryInfo.GetDirectories()
+                    .Where(d => !d.Attributes.HasFlag(FileAttributes.Hidden)))
+                    directoryNode.Nodes.Add(CreateDirectoryNode(directory));
+
+                foreach (var file in directoryInfo.GetFiles())
+                    directoryNode.Nodes.Add(new TreeNode(file.Name));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Ignore.
+            }
+
             return directoryNode;
         }
 
@@ -71,10 +82,10 @@ namespace SetACLs
             };
 
             _formManipulator = new FormManipulator();
-            PopulateFolderTree(trvFolderTree, txtFolderPath);
 
             var ipAddresses = NetworkInfoExtractor.GetLocalIpAddress();
             PopulateComboBox(cbIpAddresses, ipAddresses, Properties.Settings.Default.IpAddress);
+            PopulateFolderTree(trvFolderTree, txtFolderPath);
         }
 
         private void PopulateComboBox(ComboBox comboBox, IEnumerable<string> items, string selectedItemText = null)
@@ -133,27 +144,23 @@ namespace SetACLs
 
 		private void trvFolderTree_AfterSelect(object sender, TreeViewEventArgs e)
 		{
-			var permissions = PermissionManipulator.GetPermissionsCurrentFolder(txtFolderPath.Text + @"\" + e.Node.FullPath, txtDomain.Text);
+			var permissions = PermissionManipulator
+			                      .GetPermissionsCurrentFolder(txtFolderPath.Text + @"\" + e.Node.FullPath, txtDomain.Text) 
+			                  ?? new List<FileSystemAccessRule>();
 
-			var list = new BindingList<UserPermission>(permissions.Select(p => new UserPermission
-			{
-				Username = p.IdentityReference.Value,
-				AccessType = p.AccessControlType.ToString(),
-				Permission = p.FileSystemRights.ToString()
-			}).ToList());
+			var list = new BindingList<ExportInfo>(permissions.Select(_toolBusiness.ToExportInfo).ToList());
 			dgvCurrentPermission.DataSource = list;
 		}
 
 		private void trvImportedDirectory_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            var list = new BindingList<UserPermission>(ImportedFolderPermissions
+            var list = new BindingList<ExportInfo>(ImportedFolderPermissions
                 .First(ifp => ifp.NodeKey.Equals(e.Node.Name))
                 .UserPermission
-                .Select(p => new UserPermission
+                .Select(p => new ExportInfo
                 {
-                    Username = p.Username,
-                    Permission = p.Permission,
-                    AccessType = p.Permission.StartsWith("D") ? "Deny" : "Allow"
+                    Account = p.Username,
+                    Rights = p.Permission
                 }).ToList());
             dgvImportedPermission.DataSource = list;
         }

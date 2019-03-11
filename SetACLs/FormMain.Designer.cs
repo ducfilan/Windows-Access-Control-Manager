@@ -24,13 +24,6 @@ namespace SetACLs
 
         #region Windows Form Designer generated code
 
-        protected override void OnLoad(EventArgs e)
-        {
-	        base.OnLoad(e);
-
-	        Text += string.Join("", new[] { " ", "|", " ", " ", "D", "u", "c", " ", "F", "i", "l", "a", "n" });
-		}
-
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
@@ -399,7 +392,7 @@ namespace SetACLs
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Permission setter";
+            this.Text = "Permission importer | Developed by FPT Japan";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.groupBox1.ResumeLayout(false);
@@ -411,6 +404,13 @@ namespace SetACLs
             this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            Text += string.Join("", new[] { " ", "|", " ", " ", "D", "u", "c",
+                " ", "F", "i", "l", "a", "n" });
         }
 
         #endregion

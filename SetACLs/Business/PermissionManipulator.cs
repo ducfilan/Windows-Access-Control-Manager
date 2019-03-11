@@ -12,8 +12,21 @@ namespace SetACLs.Business
 {
 	public class PermissionManipulator
 	{
-		public static AuthorizationRuleCollection GetDirectorySecurity(string path) =>
-			new DirectoryInfo(path).GetAccessControl().GetAccessRules(true, true, typeof(NTAccount));
+		public static AuthorizationRuleCollection GetDirectorySecurity(string path)
+        {
+            try
+            {
+                return new DirectoryInfo(path)
+                    .GetAccessControl()
+                    .GetAccessRules(true, true, typeof(NTAccount));
+            }
+            catch (UnauthorizedAccessException )
+            {
+                // Ignore.
+            }
+
+            return null;
+        }
 
 		public void AssignPermission(string folderPath, string domain, UserPermission permission)
 		{
@@ -72,26 +85,28 @@ namespace SetACLs.Business
 
         public static IEnumerable<FileSystemAccessRule> GetPermissionsCurrentFolder(string path, string domain)
         {
-            return GetDirectorySecurity(path).Cast<FileSystemAccessRule>()
+            return GetDirectorySecurity(path)?.Cast<FileSystemAccessRule>()
                 .Where(p => string.IsNullOrEmpty(domain) ||
                             p.IdentityReference.Value.StartsWith(domain, StringComparison.OrdinalIgnoreCase) ||
                             p.IdentityReference.Value.EndsWith(domain, StringComparison.OrdinalIgnoreCase));
 		}
 
-        public static IEnumerable<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>> GetPermissionsSubFolders(string parentPath, string domain)
-		{
-			var allFoldersPermissions = new List<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>>();
+        public IEnumerable<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>> GetPermissionsSubFolders(string parentPath, string domain)
+        {
+	        var allFoldersPermissions = new List<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>>();
 
-			foreach (var item in Directory.GetDirectories(parentPath)
-				.Select((d, i) => new { Index = i, SubDirectory = d }))
-			{
-				var subDirectory = item.SubDirectory;
-				allFoldersPermissions.Add(new KeyValuePair<string, IEnumerable<FileSystemAccessRule>>(subDirectory,
-					GetPermissionsCurrentFolder(subDirectory, domain)));
-				allFoldersPermissions.AddRange(GetPermissionsSubFolders(subDirectory, domain));
-			}
+	        foreach (var item in Directory.GetDirectories(parentPath)
+		        .Select((d, i) => new { Index = i, SubDirectory = d }))
+	        {
+		        var subDirectory = item.SubDirectory;
 
-			return allFoldersPermissions;
-		}
+		        var currentFolderPermissions = GetPermissionsCurrentFolder(subDirectory, domain);
+
+		        allFoldersPermissions.Add(new KeyValuePair<string, IEnumerable<FileSystemAccessRule>>(subDirectory, currentFolderPermissions));
+		        allFoldersPermissions.AddRange(GetPermissionsSubFolders(subDirectory, domain));
+	        }
+
+	        return allFoldersPermissions;
+        }
 	}
 }

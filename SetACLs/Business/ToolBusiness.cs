@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using SetACLs.Const;
 using SetACLs.Model;
 
 namespace SetACLs.Business
@@ -30,7 +32,7 @@ namespace SetACLs.Business
 
                 var isHeaderPrinted = false;
                 var addedRowsCountToPrint = 0;
-                foreach (var item in PermissionManipulator.GetPermissionsSubFolders(permissionToCheckRootPath, domain)
+                foreach (var item in _permissionManipulator.GetPermissionsSubFolders(permissionToCheckRootPath, domain)
 	                .Select((p, i) => new {Index = i + 1, Permissions = p}))
                 {
                     var outputServerPath = item.Permissions.Key.Replace(permissionToCheckRootPath, @"\\" + serverIpAddress);
@@ -41,7 +43,7 @@ namespace SetACLs.Business
 
                     FillFolderSize(ws, "B",rowToFillFolderInfo, item.Permissions.Key);
 
-                    ws.Cells["C" + (item.Index + addedRowsCountToPrint)].LoadFromCollection(item.Permissions.Value, !isHeaderPrinted);
+                    ws.Cells["C" + (item.Index + addedRowsCountToPrint)].LoadFromCollection(item.Permissions.Value.Select(ToExportInfo), !isHeaderPrinted);
                     addedRowsCountToPrint += item.Permissions.Value.Count() + (isHeaderPrinted ? 0 : 1);
 
                     isHeaderPrinted = true;
@@ -174,7 +176,7 @@ namespace SetACLs.Business
 
         private static void FormatExcelHeader(ExcelWorksheet ws)
         {
-            using (var range = ws.Cells[1, 1, 1, 8])
+            using (var range = ws.Cells[1, 1, 1, 4])
             {
                 range.Style.Font.Bold = true;
                 range.Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -185,11 +187,26 @@ namespace SetACLs.Business
 
         private static void FillFolderSize(ExcelWorksheet ws, string colToFillFolderInfo, int rowToFillFolderInfo, string path)
         {
-            var fileSize_KB = DirectoryInfoExtractor.DirectorySize_Byte(path) / 1024;
+            var fileSize_GB = DirectoryInfoExtractor.DirectorySize_Byte(path) / Math.Pow(1024, 3);
 
-            ws.Cells[colToFillFolderInfo + 1].Value = "File size (KB)";
-            ws.Cells[colToFillFolderInfo + rowToFillFolderInfo].Value = fileSize_KB;
+            ws.Cells[colToFillFolderInfo + 1].Value = "File size (GB)";
+            ws.Cells[colToFillFolderInfo + rowToFillFolderInfo].Value = fileSize_GB;
             ws.Cells[colToFillFolderInfo + rowToFillFolderInfo].Style.Numberformat.Format = "#,##0.00";
+        }
+
+        public ExportInfo ToExportInfo(FileSystemAccessRule rule)
+        {
+            return new ExportInfo
+            {
+                Account = Regex.Replace(rule.IdentityReference.Value, @"^.*?[/\\]", string.Empty),
+                Rights = (rule.FileSystemRights & Permissions.Instance.All["N"].Item1) == Permissions.Instance.All["N"].Item1 &&
+                         rule.AccessControlType == AccessControlType.Deny ? "N" :
+                    (rule.AccessControlType == AccessControlType.Allow ? string.Empty : "D") + 
+                    (
+                        (rule.FileSystemRights & Permissions.Instance.All["M"].Item1) == Permissions.Instance.All["M"].Item1 ? "M" : 
+                        (rule.FileSystemRights & Permissions.Instance.All["R"].Item1) == Permissions.Instance.All["R"].Item1 ? "R" : "N/A"
+                    )
+            };
         }
 
         private void SetIndividualPermission(string folderPath, string domain, FolderPermission permissions)
