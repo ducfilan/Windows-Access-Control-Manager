@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using OfficeOpenXml;
@@ -32,7 +30,8 @@ namespace SetACLs.Business
 
                 var isHeaderPrinted = false;
                 var addedRowsCountToPrint = 0;
-                foreach (var item in GetPermissionsSubFolders(permissionToCheckRootPath, domain).Select((p, i) => new {Index = i + 1, Permissions = p}))
+                foreach (var item in PermissionManipulator.GetPermissionsSubFolders(permissionToCheckRootPath, domain)
+	                .Select((p, i) => new {Index = i + 1, Permissions = p}))
                 {
                     var outputServerPath = item.Permissions.Key.Replace(permissionToCheckRootPath, @"\\" + serverIpAddress);
 
@@ -191,22 +190,6 @@ namespace SetACLs.Business
             ws.Cells[colToFillFolderInfo + 1].Value = "File size (KB)";
             ws.Cells[colToFillFolderInfo + rowToFillFolderInfo].Value = fileSize_KB;
             ws.Cells[colToFillFolderInfo + rowToFillFolderInfo].Style.Numberformat.Format = "#,##0.00";
-        }
-
-        private IEnumerable<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>> GetPermissionsSubFolders(string parentPath, string domain)
-        {
-            var allFoldersPermissions = new List<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>>();
-
-            foreach (var item in Directory.GetDirectories(parentPath)
-                .Select((d, i) => new { Index = i, SubDirectory = d }))
-            {
-                var subDirectory = item.SubDirectory;
-                allFoldersPermissions.Add(new KeyValuePair<string, IEnumerable<FileSystemAccessRule>>(subDirectory,
-                    PermissionManipulator.GetPermissionsCurrentFolder(subDirectory, domain)));
-                allFoldersPermissions.AddRange(GetPermissionsSubFolders(subDirectory, domain));
-            }
-
-            return allFoldersPermissions;
         }
 
         private void SetIndividualPermission(string folderPath, string domain, FolderPermission permissions)

@@ -74,7 +74,24 @@ namespace SetACLs.Business
         {
             return GetDirectorySecurity(path).Cast<FileSystemAccessRule>()
                 .Where(p => string.IsNullOrEmpty(domain) ||
-                            p.IdentityReference.Value.StartsWith(domain));
-        }
-    }
+                            p.IdentityReference.Value.StartsWith(domain, StringComparison.OrdinalIgnoreCase) ||
+                            p.IdentityReference.Value.EndsWith(domain, StringComparison.OrdinalIgnoreCase));
+		}
+
+        public static IEnumerable<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>> GetPermissionsSubFolders(string parentPath, string domain)
+		{
+			var allFoldersPermissions = new List<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>>();
+
+			foreach (var item in Directory.GetDirectories(parentPath)
+				.Select((d, i) => new { Index = i, SubDirectory = d }))
+			{
+				var subDirectory = item.SubDirectory;
+				allFoldersPermissions.Add(new KeyValuePair<string, IEnumerable<FileSystemAccessRule>>(subDirectory,
+					GetPermissionsCurrentFolder(subDirectory, domain)));
+				allFoldersPermissions.AddRange(GetPermissionsSubFolders(subDirectory, domain));
+			}
+
+			return allFoldersPermissions;
+		}
+	}
 }
