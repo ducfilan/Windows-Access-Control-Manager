@@ -8,6 +8,7 @@ using System.Security.AccessControl;
 using System.Windows.Forms;
 using SetACLs.Business;
 using SetACLs.Model;
+using System.Threading.Tasks;
 
 namespace SetACLs
 {
@@ -99,14 +100,21 @@ namespace SetACLs
             PopulateFolderTree(trvFolderTree, txtFolderPath);
         }
 
-        private void btnExportPermission_Click(object sender, EventArgs e)
+        private async void btnExportPermission_Click(object sender, EventArgs e)
         {
 	        if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
 
-	        _toolBusiness.ExportPermission(txtFolderPath.Text, 
-	            saveFileDialog.FileName, 
-	            txtDomain.Text,
-	            cbIpAddresses.Text);
+            var progress = new Progress<int>(v =>
+            {
+                progressBar.Value = v;
+            });
+
+            var exportIpAddress = cbIpAddresses.Text;
+            await Task.Run(() => _toolBusiness.ExportPermission(txtFolderPath.Text,
+                saveFileDialog.FileName,
+                txtDomain.Text,
+                exportIpAddress,
+                progress));
 
 	        try
 			{

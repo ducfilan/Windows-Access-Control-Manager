@@ -56,6 +56,7 @@ namespace SetACLs
             this.btnSetDomain = new System.Windows.Forms.Button();
             this.cbIpAddresses = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -130,7 +131,7 @@ namespace SetACLs
             this.trvFolderTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.trvFolderTree.Location = new System.Drawing.Point(3, 15);
             this.trvFolderTree.Name = "trvFolderTree";
-            this.trvFolderTree.Size = new System.Drawing.Size(285, 461);
+            this.trvFolderTree.Size = new System.Drawing.Size(285, 463);
             this.trvFolderTree.TabIndex = 0;
             this.trvFolderTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.trvFolderTree_AfterSelect);
             // 
@@ -140,7 +141,7 @@ namespace SetACLs
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(291, 479);
+            this.groupBox1.Size = new System.Drawing.Size(291, 481);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Current Directory tree";
@@ -163,7 +164,7 @@ namespace SetACLs
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1190, 485);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1190, 487);
             this.tableLayoutPanel1.TabIndex = 9;
             // 
             // groupBox4
@@ -172,7 +173,7 @@ namespace SetACLs
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox4.Location = new System.Drawing.Point(894, 3);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(293, 479);
+            this.groupBox4.Size = new System.Drawing.Size(293, 481);
             this.groupBox4.TabIndex = 5;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Imported Permission";
@@ -188,7 +189,7 @@ namespace SetACLs
             this.dgvImportedPermission.Name = "dgvImportedPermission";
             this.dgvImportedPermission.ReadOnly = true;
             this.dgvImportedPermission.RowTemplate.Height = 21;
-            this.dgvImportedPermission.Size = new System.Drawing.Size(287, 461);
+            this.dgvImportedPermission.Size = new System.Drawing.Size(287, 463);
             this.dgvImportedPermission.TabIndex = 1;
             // 
             // groupBox3
@@ -197,7 +198,7 @@ namespace SetACLs
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox3.Location = new System.Drawing.Point(597, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(291, 479);
+            this.groupBox3.Size = new System.Drawing.Size(291, 481);
             this.groupBox3.TabIndex = 4;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Current Permission";
@@ -213,7 +214,7 @@ namespace SetACLs
             this.dgvCurrentPermission.Name = "dgvCurrentPermission";
             this.dgvCurrentPermission.ReadOnly = true;
             this.dgvCurrentPermission.RowTemplate.Height = 21;
-            this.dgvCurrentPermission.Size = new System.Drawing.Size(285, 461);
+            this.dgvCurrentPermission.Size = new System.Drawing.Size(285, 463);
             this.dgvCurrentPermission.TabIndex = 0;
             // 
             // groupBox2
@@ -222,7 +223,7 @@ namespace SetACLs
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox2.Location = new System.Drawing.Point(300, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(291, 479);
+            this.groupBox2.Size = new System.Drawing.Size(291, 481);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Imported Directory tree";
@@ -232,7 +233,7 @@ namespace SetACLs
             this.trvImportedDirectory.Dock = System.Windows.Forms.DockStyle.Fill;
             this.trvImportedDirectory.Location = new System.Drawing.Point(3, 15);
             this.trvImportedDirectory.Name = "trvImportedDirectory";
-            this.trvImportedDirectory.Size = new System.Drawing.Size(285, 461);
+            this.trvImportedDirectory.Size = new System.Drawing.Size(285, 463);
             this.trvImportedDirectory.TabIndex = 0;
             this.trvImportedDirectory.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.trvImportedDirectory_AfterSelect);
             // 
@@ -255,7 +256,7 @@ namespace SetACLs
             // 
             this.btnExportPermission.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnExportPermission.Font = new System.Drawing.Font("MS UI Gothic", 11.25F);
-            this.btnExportPermission.Location = new System.Drawing.Point(12, 557);
+            this.btnExportPermission.Location = new System.Drawing.Point(17, 552);
             this.btnExportPermission.Name = "btnExportPermission";
             this.btnExportPermission.Size = new System.Drawing.Size(140, 35);
             this.btnExportPermission.TabIndex = 11;
@@ -295,7 +296,7 @@ namespace SetACLs
             this.btnCreateFolderTree.BackColor = System.Drawing.Color.Red;
             this.btnCreateFolderTree.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.btnCreateFolderTree.ForeColor = System.Drawing.Color.White;
-            this.btnCreateFolderTree.Location = new System.Drawing.Point(878, 557);
+            this.btnCreateFolderTree.Location = new System.Drawing.Point(878, 552);
             this.btnCreateFolderTree.Name = "btnCreateFolderTree";
             this.btnCreateFolderTree.Size = new System.Drawing.Size(140, 35);
             this.btnCreateFolderTree.TabIndex = 18;
@@ -309,7 +310,7 @@ namespace SetACLs
             this.btnAssignPermission.BackColor = System.Drawing.Color.Red;
             this.btnAssignPermission.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.btnAssignPermission.ForeColor = System.Drawing.Color.White;
-            this.btnAssignPermission.Location = new System.Drawing.Point(1024, 557);
+            this.btnAssignPermission.Location = new System.Drawing.Point(1024, 552);
             this.btnAssignPermission.Name = "btnAssignPermission";
             this.btnAssignPermission.Size = new System.Drawing.Size(140, 35);
             this.btnAssignPermission.TabIndex = 19;
@@ -327,7 +328,7 @@ namespace SetACLs
             this.btnHelp.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.btnHelp.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnHelp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnHelp.Location = new System.Drawing.Point(1170, 565);
+            this.btnHelp.Location = new System.Drawing.Point(1170, 560);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(32, 21);
             this.btnHelp.TabIndex = 20;
@@ -366,11 +367,21 @@ namespace SetACLs
             this.label3.TabIndex = 23;
             this.label3.Text = "IP";
             // 
+            // progressBar
+            // 
+            this.progressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.progressBar.Location = new System.Drawing.Point(0, 593);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(1214, 10);
+            this.progressBar.Step = 1;
+            this.progressBar.TabIndex = 24;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1214, 595);
+            this.ClientSize = new System.Drawing.Size(1214, 603);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.cbIpAddresses);
             this.Controls.Add(this.btnSetDomain);
@@ -404,6 +415,7 @@ namespace SetACLs
             this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         protected override void OnLoad(EventArgs e)
@@ -443,5 +455,6 @@ namespace SetACLs
         private System.Windows.Forms.Button btnSetDomain;
         private System.Windows.Forms.ComboBox cbIpAddresses;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }

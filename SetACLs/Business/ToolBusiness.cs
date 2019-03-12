@@ -24,7 +24,7 @@ namespace SetACLs.Business
 			_permissionManipulator = new PermissionManipulator();
 		}
 
-		public void ExportPermission(string permissionToCheckRootPath, string fileNameFullPath, string domain, string serverIpAddress)
+        public void ExportPermission(string permissionToCheckRootPath, string fileNameFullPath, string domain, string serverIpAddress, IProgress<int> progress)
 		{
 			using (var excel = new ExcelPackage())
 			{
@@ -32,9 +32,15 @@ namespace SetACLs.Business
 
                 var isHeaderPrinted = false;
                 var addedRowsCountToPrint = 0;
-                foreach (var item in _permissionManipulator.GetPermissionsSubFolders(permissionToCheckRootPath, domain)
-	                .Select((p, i) => new {Index = i + 1, Permissions = p}))
+
+                var permissionsSubFolders = _permissionManipulator.GetPermissionsSubFolders(permissionToCheckRootPath, domain)
+                    .Select((p, i) => new {Index = i + 1, Permissions = p})
+                    .ToList();
+
+                foreach (var item in permissionsSubFolders)
                 {
+                    progress?.Report(item.Index/permissionsSubFolders.Count * 100);
+
                     var outputServerPath = item.Permissions.Key.Replace(permissionToCheckRootPath, @"\\" + serverIpAddress);
 
                     var rowToFillFolderInfo = item.Index + addedRowsCountToPrint + (isHeaderPrinted ? 0 : 1);
