@@ -25,32 +25,48 @@ namespace SetACLs
             InitializeComponent();
         }
 
-        private void btnBrowseFolder_Click(object sender, EventArgs e)
+        private async void btnBrowseFolder_Click(object sender, EventArgs e)
         {
             if (folderBrowserDialog.ShowDialog() != DialogResult.OK) return;
 
             txtFolderPath.Text = Properties.Settings.Default.FolderPath = folderBrowserDialog.SelectedPath;
             Properties.Settings.Default.Save();
-            PopulateFolderTree(trvFolderTree, txtFolderPath);
+            await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, txtFolderPath.Text));
         }
 
-        private void PopulateFolderTree(TreeView treeView, Control folderPathTextBox)
+        private async Task PopulateFolderTreeAsync(TreeView treeView, string folderPath)
         {
-            if (string.IsNullOrEmpty(folderPathTextBox.Text)) return;
+            if (string.IsNullOrEmpty(folderPath)) return;
 
-            if (!Directory.Exists(folderPathTextBox.Text))
+            progressBar.BeginInvoke((MethodInvoker) delegate
+			{
+				progressBar.Style = ProgressBarStyle.Marquee;
+				progressBar.MarqueeAnimationSpeed = 30;
+			});
+
+			if (!Directory.Exists(folderPath))
             {
                 _formManipulator.ShowError("Folder is not exists! Browse a new folder!");
                 return;
             }
 
-            treeView.Nodes.Clear();
-            var rootDirectoryInfo = new DirectoryInfo(folderPathTextBox.Text);
-            trvFolderTree.Nodes.AddRange(CreateDirectoryNode(rootDirectoryInfo).Nodes.Cast<TreeNode>().ToArray());
-            trvFolderTree.ExpandAll();
-        }
+            var rootDirectoryInfo = new DirectoryInfo(folderPath);
+            var nodes = await Task.Run(() => CreateDirectoryNode(rootDirectoryInfo));
 
-        private static TreeNode CreateDirectoryNode(DirectoryInfo directoryInfo)
+            treeView.BeginInvoke((MethodInvoker) delegate
+			{
+				treeView.Nodes.Clear();
+				treeView.Nodes.AddRange(nodes.Nodes.Cast<TreeNode>().ToArray());
+				treeView.ExpandAll();
+			});
+
+            progressBar.BeginInvoke((MethodInvoker)delegate
+            {
+	            progressBar.Style = ProgressBarStyle.Blocks;
+            });
+		}
+
+        private static async Task<TreeNode> CreateDirectoryNode(DirectoryInfo directoryInfo)
         {
             var directoryNode = new TreeNode(directoryInfo.Name);
 
@@ -58,7 +74,7 @@ namespace SetACLs
             {
                 foreach (var directory in directoryInfo.GetDirectories()
                     .Where(d => !d.Attributes.HasFlag(FileAttributes.Hidden)))
-                    directoryNode.Nodes.Add(CreateDirectoryNode(directory));
+                    directoryNode.Nodes.Add(await Task.Run(() => CreateDirectoryNode(directory)));
 
                 foreach (var file in directoryInfo.GetFiles())
                     directoryNode.Nodes.Add(new TreeNode(file.Name));
@@ -71,7 +87,7 @@ namespace SetACLs
             return directoryNode;
         }
 
-        private void FormMain_Load(object sender, EventArgs e)
+        private async void FormMain_Load(object sender, EventArgs e)
         {
             txtFolderPath.Text   = Properties.Settings.Default.FolderPath;
             txtDomain.Text       = Properties.Settings.Default.Domain;
@@ -86,8 +102,9 @@ namespace SetACLs
 
             var ipAddresses = NetworkInfoExtractor.GetLocalIpAddress();
             PopulateComboBox(cbIpAddresses, ipAddresses, Properties.Settings.Default.IpAddress);
-            PopulateFolderTree(trvFolderTree, txtFolderPath);
-        }
+
+            await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, txtFolderPath.Text));
+		}
 
         private void PopulateComboBox(ComboBox comboBox, IEnumerable<string> items, string selectedItemText = null)
         {
@@ -95,10 +112,10 @@ namespace SetACLs
             comboBox.SelectedText = selectedItemText;
         }
 
-        private void btnRefreshFolder_Click(object sender, EventArgs e)
-        {
-            PopulateFolderTree(trvFolderTree, txtFolderPath);
-        }
+        private async void btnRefreshFolder_Click(object sender, EventArgs e)
+		{
+			await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, txtFolderPath.Text));
+		}
 
         private async void btnExportPermission_Click(object sender, EventArgs e)
         {
@@ -174,14 +191,14 @@ namespace SetACLs
             dgvImportedPermission.DataSource = list;
         }
 
-		private void BtnCreateFolderTree_Click(object sender, EventArgs e)
+		private async void BtnCreateFolderTree_Click(object sender, EventArgs e)
 		{
 			if (_formManipulator.ShowWarning("You're gonna create a folder tree based on the imported folder structure. Are you sure?") == 
                 DialogResult.No) return;
 
 			CreateFolder(txtFolderPath.Text, trvImportedDirectory.Nodes);
 
-            PopulateFolderTree(trvFolderTree, txtFolderPath);
+			await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, txtFolderPath.Text));
 
             _formManipulator.ShowMessage("Folders have been created successfully!");
 		}

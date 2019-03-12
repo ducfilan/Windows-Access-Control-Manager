@@ -32,14 +32,14 @@ namespace SetACLs.Business
 
                 var isHeaderPrinted = false;
                 var addedRowsCountToPrint = 0;
-
-                var permissionsSubFolders = _permissionManipulator.GetPermissionsSubFolders(permissionToCheckRootPath, domain)
+                progress?.Report(50);
+				var permissionsSubFolders = _permissionManipulator.GetPermissionsSubFolders(permissionToCheckRootPath, domain)
                     .Select((p, i) => new {Index = i + 1, Permissions = p})
                     .ToList();
 
                 foreach (var item in permissionsSubFolders)
                 {
-                    progress?.Report(item.Index/permissionsSubFolders.Count * 100);
+                    progress?.Report(50 + item.Index * 50 / permissionsSubFolders.Count);
 
                     var outputServerPath = item.Permissions.Key.Replace(permissionToCheckRootPath, @"\\" + serverIpAddress);
 
