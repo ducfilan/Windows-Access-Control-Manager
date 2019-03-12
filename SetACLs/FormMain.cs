@@ -104,6 +104,7 @@ namespace SetACLs
         {
 	        if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
 
+            progressBar.Value = 0;
             var progress = new Progress<int>(v =>
             {
                 progressBar.Value = v;
