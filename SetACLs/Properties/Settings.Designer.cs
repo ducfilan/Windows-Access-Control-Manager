@@ -94,5 +94,17 @@ namespace SetACLs.Properties {
                 this["BlankTemplateFileName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsSubFolderOnly {
+            get {
+                return ((bool)(this["IsSubFolderOnly"]));
+            }
+            set {
+                this["IsSubFolderOnly"] = value;
+            }
+        }
     }
 }

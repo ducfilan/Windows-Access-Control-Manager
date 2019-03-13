@@ -89,9 +89,10 @@ namespace SetACLs
 
         private async void FormMain_Load(object sender, EventArgs e)
         {
-            txtFolderPath.Text   = Properties.Settings.Default.FolderPath;
-            txtDomain.Text       = Properties.Settings.Default.Domain;
-            txtTemplatePath.Text = Properties.Settings.Default.TemplatePath;
+            txtFolderPath.Text       = Properties.Settings.Default.FolderPath;
+            txtDomain.Text           = Properties.Settings.Default.Domain;
+            txtTemplatePath.Text     = Properties.Settings.Default.TemplatePath;
+            chkOnlySubFolder.Checked = Properties.Settings.Default.IsSubFolderOnly;
 
             _toolBusiness = new ToolBusiness
             {
@@ -237,9 +238,15 @@ namespace SetACLs
 			if (_formManipulator.ShowWarning("You're gonna create a folder tree based on the imported folder structure. Are you sure?") == 
                 DialogResult.No) return;
 
-			CreateFolder(txtFolderPath.Text, trvImportedDirectory.Nodes);
+            var baseFolderPath = txtFolderPath.Text;
+            if (chkOnlySubFolder.Checked)
+            {
+                baseFolderPath = new DirectoryInfo(baseFolderPath).Parent?.FullName;
+            }
 
-			await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, txtFolderPath.Text));
+            CreateFolder(baseFolderPath, trvImportedDirectory.Nodes);
+
+			await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, baseFolderPath));
 
             _formManipulator.ShowMessage("Folders have been created successfully!");
 		}
@@ -262,11 +269,17 @@ namespace SetACLs
 			{
 				_formManipulator.ShowMessage("Please import template first!");
 				return;
-			}
+            }
 
-			try
+            var baseFolderPath = txtFolderPath.Text;
+            if (chkOnlySubFolder.Checked)
+            {
+                baseFolderPath = new DirectoryInfo(baseFolderPath).Parent?.FullName;
+            }
+
+            try
 			{
-				_toolBusiness.ApplyPermissionFromImportedTemplate(txtFolderPath.Text, txtDomain.Text, ImportedRootNodeChildren, ImportedFolderPermissions);
+				_toolBusiness.ApplyPermissionFromImportedTemplate(baseFolderPath, txtDomain.Text, ImportedRootNodeChildren, ImportedFolderPermissions);
 
 				_formManipulator.ShowInformation("Permissions are successfully set!");
 			}
@@ -290,6 +303,43 @@ namespace SetACLs
         private void cbIpAddresses_SelectedValueChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.IpAddress = cbIpAddresses.SelectedItem.ToString();
+            Properties.Settings.Default.Save();
+        }
+
+        private void btnSaveCurrentPermission_Click(object sender, EventArgs e)
+        {
+            if (_formManipulator.ShowWarning("You're gonna assign all permissions based on the edited values. Are you sure?") ==
+                DialogResult.No) return;
+
+            var editedDataSource = dgvCurrentPermission.DataSource as BindingList<ExportInfo>;
+            if (editedDataSource == null) return;
+
+            var permissions = new FolderPermission
+            {
+                NodeKey = string.Empty, // Not important here.
+                UserPermission = editedDataSource.Select(ei => new UserPermission
+                {
+                    Permission = ei.Rights,
+                    Username = ei.Account
+                }).ToList()
+            };
+
+            try
+            {
+                _toolBusiness.SetIndividualPermission(txtFolderPath.Text + @"\" + trvFolderTree.SelectedNode.FullPath,
+                    txtDomain.Text, permissions);
+            }
+            catch (Exception exception)
+            {
+                _formManipulator.ShowError(exception.Message);
+            }
+        }
+
+        private void chkOnlySubFolder_CheckedChanged(object sender, EventArgs e)
+        {
+            btnRefreshFolder.PerformClick();
+
+            Properties.Settings.Default.IsSubFolderOnly = ((CheckBox) sender).Checked;
             Properties.Settings.Default.Save();
         }
     }

@@ -20,5 +20,8 @@
     <Setting Name="BlankTemplateFileName" Type="System.String" Scope="User">
       <Value Profile="(Default)">BlankTemplate.xlsx</Value>
     </Setting>
+    <Setting Name="IsSubFolderOnly" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -266,7 +266,15 @@ namespace SetACLs.Business
 				SetIndividualPermission(subFolder, domain, currentFolderPermissions);
 				ApplyPermissionFromImportedTemplate(subFolder, domain, node.Nodes, importedFolderPermissions);
 			}
-		}
+        }
+
+        public void SetIndividualPermission(string folderPath, string domain, FolderPermission permissions)
+        {
+            foreach (var permission in permissions.UserPermission)
+            {
+                _permissionManipulator.AssignPermission(folderPath, domain, permission);
+            }
+        }
 
         #region Private Methods
 
@@ -330,14 +338,6 @@ namespace SetACLs.Business
                         (rule.FileSystemRights & Permissions.Instance.All["R"].Item1) == Permissions.Instance.All["R"].Item1 ? "R" : "N/A"
                     )
             };
-        }
-
-        private void SetIndividualPermission(string folderPath, string domain, FolderPermission permissions)
-        {
-            foreach (var permission in permissions.UserPermission)
-            {
-                _permissionManipulator.AssignPermission(folderPath, domain, permission);
-            }
         }
 
         #endregion

@@ -41,7 +41,9 @@ namespace SetACLs
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.dgvImportedPermission = new System.Windows.Forms.DataGridView();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dgvCurrentPermission = new System.Windows.Forms.DataGridView();
+            this.btnSaveCurrentPermission = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.trvImportedDirectory = new System.Windows.Forms.TreeView();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -58,11 +60,16 @@ namespace SetACLs
             this.label3 = new System.Windows.Forms.Label();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.btnExportToTemplate = new System.Windows.Forms.Button();
+            this.chkOnlySubFolder = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvImportedPermission)).BeginInit();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCurrentPermission)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -195,7 +202,7 @@ namespace SetACLs
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.dgvCurrentPermission);
+            this.groupBox3.Controls.Add(this.splitContainer1);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox3.Location = new System.Drawing.Point(597, 3);
             this.groupBox3.Name = "groupBox3";
@@ -204,19 +211,49 @@ namespace SetACLs
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Current Permission";
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainer1.Location = new System.Drawing.Point(3, 15);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.dgvCurrentPermission);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.btnSaveCurrentPermission);
+            this.splitContainer1.Size = new System.Drawing.Size(285, 463);
+            this.splitContainer1.SplitterDistance = 420;
+            this.splitContainer1.TabIndex = 1;
+            // 
             // dgvCurrentPermission
             // 
-            this.dgvCurrentPermission.AllowUserToAddRows = false;
-            this.dgvCurrentPermission.AllowUserToDeleteRows = false;
             this.dgvCurrentPermission.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvCurrentPermission.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvCurrentPermission.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvCurrentPermission.Location = new System.Drawing.Point(3, 15);
+            this.dgvCurrentPermission.Location = new System.Drawing.Point(0, 0);
             this.dgvCurrentPermission.Name = "dgvCurrentPermission";
-            this.dgvCurrentPermission.ReadOnly = true;
             this.dgvCurrentPermission.RowTemplate.Height = 21;
-            this.dgvCurrentPermission.Size = new System.Drawing.Size(285, 463);
-            this.dgvCurrentPermission.TabIndex = 0;
+            this.dgvCurrentPermission.Size = new System.Drawing.Size(285, 420);
+            this.dgvCurrentPermission.TabIndex = 1;
+            // 
+            // btnSaveCurrentPermission
+            // 
+            this.btnSaveCurrentPermission.BackColor = System.Drawing.Color.Red;
+            this.btnSaveCurrentPermission.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnSaveCurrentPermission.Font = new System.Drawing.Font("MS UI Gothic", 11.25F);
+            this.btnSaveCurrentPermission.ForeColor = System.Drawing.Color.White;
+            this.btnSaveCurrentPermission.Location = new System.Drawing.Point(0, 0);
+            this.btnSaveCurrentPermission.Name = "btnSaveCurrentPermission";
+            this.btnSaveCurrentPermission.Size = new System.Drawing.Size(285, 39);
+            this.btnSaveCurrentPermission.TabIndex = 0;
+            this.btnSaveCurrentPermission.Text = "Save";
+            this.btnSaveCurrentPermission.UseVisualStyleBackColor = false;
+            this.btnSaveCurrentPermission.Click += new System.EventHandler(this.btnSaveCurrentPermission_Click);
             // 
             // groupBox2
             // 
@@ -389,11 +426,24 @@ namespace SetACLs
             this.btnExportToTemplate.UseVisualStyleBackColor = true;
             this.btnExportToTemplate.Click += new System.EventHandler(this.btnExportToTemplate_Click);
             // 
+            // chkOnlySubFolder
+            // 
+            this.chkOnlySubFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkOnlySubFolder.AutoSize = true;
+            this.chkOnlySubFolder.Location = new System.Drawing.Point(762, 564);
+            this.chkOnlySubFolder.Name = "chkOnlySubFolder";
+            this.chkOnlySubFolder.Size = new System.Drawing.Size(110, 16);
+            this.chkOnlySubFolder.TabIndex = 26;
+            this.chkOnlySubFolder.Text = "Only sub-folders";
+            this.chkOnlySubFolder.UseVisualStyleBackColor = true;
+            this.chkOnlySubFolder.CheckedChanged += new System.EventHandler(this.chkOnlySubFolder_CheckedChanged);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1214, 603);
+            this.Controls.Add(this.chkOnlySubFolder);
             this.Controls.Add(this.btnExportToTemplate);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.label3);
@@ -425,6 +475,10 @@ namespace SetACLs
             this.groupBox4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvImportedPermission)).EndInit();
             this.groupBox3.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvCurrentPermission)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -456,7 +510,6 @@ namespace SetACLs
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TreeView trvImportedDirectory;
         private System.Windows.Forms.DataGridView dgvImportedPermission;
-        private System.Windows.Forms.DataGridView dgvCurrentPermission;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.Button btnImportTemplate;
         private System.Windows.Forms.Button btnExportPermission;
@@ -471,5 +524,9 @@ namespace SetACLs
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Button btnExportToTemplate;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.DataGridView dgvCurrentPermission;
+        private System.Windows.Forms.Button btnSaveCurrentPermission;
+        private System.Windows.Forms.CheckBox chkOnlySubFolder;
     }
 }
