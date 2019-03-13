@@ -22,19 +22,20 @@ namespace SetACLs.Business
         public ToolBusiness()
 		{
 			_permissionManipulator = new PermissionManipulator();
-		}
+        }
 
         public void ExportPermission(string permissionToCheckRootPath, string fileNameFullPath, string domain, string serverIpAddress, IProgress<int> progress)
-		{
-			using (var excel = new ExcelPackage())
-			{
-				var ws = excel.Workbook.Worksheets.Add("Permission");
+        {
+            using (var excel = new ExcelPackage())
+            {
+                var ws = excel.Workbook.Worksheets.Add("Permission");
 
                 var isHeaderPrinted = false;
                 var addedRowsCountToPrint = 0;
                 progress?.Report(50);
-				var permissionsSubFolders = _permissionManipulator.GetPermissionsSubFolders(permissionToCheckRootPath, domain)
-                    .Select((p, i) => new {Index = i + 1, Permissions = p})
+                var permissionsSubFolders = _permissionManipulator
+                    .GetPermissionsSubFolders(permissionToCheckRootPath, domain)
+                    .Select((p, i) => new { Index = i + 1, Permissions = p })
                     .ToList();
 
                 foreach (var item in permissionsSubFolders)
@@ -47,19 +48,135 @@ namespace SetACLs.Business
 
                     ws.Cells["A" + rowToFillFolderInfo].Value = outputServerPath;
 
-                    FillFolderSize(ws, "B",rowToFillFolderInfo, item.Permissions.Key);
+                    FillFolderSize(ws, "B", rowToFillFolderInfo, item.Permissions.Key);
 
                     ws.Cells["C" + (item.Index + addedRowsCountToPrint)].LoadFromCollection(item.Permissions.Value.Select(ToExportInfo), !isHeaderPrinted);
                     addedRowsCountToPrint += item.Permissions.Value.Count() + (isHeaderPrinted ? 0 : 1);
 
                     isHeaderPrinted = true;
                 }
-				ws.Cells.AutoFitColumns(0);
+                ws.Cells.AutoFitColumns();
 
-				FormatExcelHeader(ws);
+                FormatExcelHeader(ws);
+                progress?.Report(100);
 
-				excel.SaveAs(new FileInfo(fileNameFullPath));
-			}
+                excel.SaveAs(new FileInfo(fileNameFullPath));
+            }
+        }
+
+        public void ExportPermissionByTemplate(string permissionToCheckRootPath, string fileNameFullPath, string domain, string serverIpAddress, IProgress<int> progress)
+        {
+            var blankTemplateFileName = Properties.Settings.Default.BlankTemplateFileName;
+            var templateSheetName = Properties.Settings.Default.TemplateSheetName;
+
+            var userList = new Dictionary<string, int>();
+
+            using (var excel = new ExcelPackage(new FileInfo(blankTemplateFileName)))
+            {
+                var worksheet = excel.Workbook.Worksheets[templateSheetName];
+
+                progress?.Report(50);
+
+                var permissionsSubFolders = _permissionManipulator
+                    .GetPermissionsSubFolders(permissionToCheckRootPath, domain)
+                    .Select((p, i) => new { Index = i, Permissions = p })
+                    .ToList();
+
+                const int folderStartRow = 3;
+                const int accountRow = 2;
+
+                var folderBaseCellStyle  = worksheet.Cells["A3"].Style;
+                var accountBaseCellStyle = worksheet.Cells["A2"].Style;
+                var rightsBaseCellStyle  = worksheet.Cells["B3"].Style;
+
+                var accountsCount = 1;
+                var folderMaxDepth = 1;
+
+                foreach (var item in permissionsSubFolders)
+                {
+                    progress?.Report(50 + item.Index * 50 / permissionsSubFolders.Count);
+
+                    var pathBeginWithRootFolder = item.Permissions.Key.Remove(0, permissionToCheckRootPath.Length);
+
+                    var folderParts = pathBeginWithRootFolder.Split(new []{ '\\' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (folderParts.Length > folderMaxDepth)
+                    {
+                        worksheet.InsertColumn(folderMaxDepth + 1, folderParts.Length - folderMaxDepth);
+                        folderMaxDepth = folderParts.Length;
+                    }
+
+                    var folderName = folderParts.Last();
+                    var folderCol = folderParts.Length;
+
+                    worksheet.Cells[folderStartRow + item.Index, folderCol].Value = folderName;
+
+                    var permissionsCurrentFolder = item.Permissions.Value.Select(ToExportInfo).ToList();
+                    foreach (var permission in permissionsCurrentFolder)
+                    {
+                        int rightsCol;
+                        if (!userList.ContainsKey(permission.Account))
+                        {
+                            userList.Add(permission.Account, accountsCount++);
+                            worksheet.Cells[accountRow, accountsCount + folderMaxDepth - 1].Value = permission.Account;
+                            rightsCol = accountsCount + folderMaxDepth - 1;
+                        }
+                        else
+                        {
+                            rightsCol = userList[permission.Account] + folderMaxDepth;
+                        }
+
+                        worksheet.Cells[folderStartRow + item.Index, rightsCol].Value = permission.Rights;
+                    }
+                }
+
+                CopyStyle(worksheet, folderStartRow, 1, folderStartRow + permissionsSubFolders.Count - 1, folderMaxDepth, folderBaseCellStyle);
+                CopyStyle(worksheet, folderStartRow, folderMaxDepth + 1, folderStartRow + permissionsSubFolders.Count - 1, folderMaxDepth - 1 + accountsCount, rightsBaseCellStyle);
+                CopyStyle(worksheet, 2, 1, 2, folderMaxDepth - 1 + accountsCount, accountBaseCellStyle);
+
+                MergeFolderStructureHeader(worksheet, folderMaxDepth);
+
+                worksheet.Cells.AutoFitColumns();
+                progress?.Report(100);
+
+                excel.SaveAs(new FileInfo(fileNameFullPath));
+            }
+        }
+
+        private static void MergeFolderStructureHeader(ExcelWorksheet worksheet, int folderMaxDepth)
+        {
+            worksheet.Cells[1, 1, 1, folderMaxDepth].Merge = true;
+        }
+
+        private static void CopyStyle(ExcelWorksheet worksheet, int destStartRow, int destStartCol, int destEndRow, int destEndCol, ExcelStyle baseStyle)
+        {
+            worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.Border = baseStyle.Border;
+
+            worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.HorizontalAlignment = baseStyle.HorizontalAlignment;
+            worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.VerticalAlignment = baseStyle.VerticalAlignment;
+            worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.Fill.PatternType = baseStyle.Fill.PatternType;
+            if (!string.IsNullOrEmpty(baseStyle.Fill.BackgroundColor.Rgb))
+            {
+                worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.Fill.BackgroundColor
+                    .SetColor(ColorTranslator.FromHtml("#" + baseStyle.Fill.BackgroundColor.Rgb));
+            }
+            worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.Border.Top.Style = baseStyle.Border.Top.Style;
+            worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.Border.Right.Style = baseStyle.Border.Right.Style;
+            worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.Border.Bottom.Style = baseStyle.Border.Bottom.Style;
+            worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.Border.Left.Style = baseStyle.Border.Left.Style;
+
+            worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.Font.Bold = baseStyle.Font.Bold;
+            worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.Font.Italic = baseStyle.Font.Italic;
+            worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.Font.UnderLine = baseStyle.Font.UnderLine;
+            worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.Font.Family = baseStyle.Font.Family;
+            worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.Font.Name = baseStyle.Font.Name;
+            worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.Font.Size = baseStyle.Font.Size;
+
+            if (!string.IsNullOrEmpty(baseStyle.Font.Color.Rgb))
+            {
+                worksheet.Cells[destStartRow, destStartCol, destEndRow, destEndCol].Style.Font.Color
+                    .SetColor(ColorTranslator.FromHtml("#" + baseStyle.Font.Color.Rgb));
+            }
         }
 
         public Tuple<TreeNodeCollection, List<FolderPermission>> ImportTemplate(string templatePath = null)

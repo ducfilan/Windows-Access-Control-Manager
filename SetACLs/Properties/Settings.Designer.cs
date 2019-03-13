@@ -82,5 +82,17 @@ namespace SetACLs.Properties {
                 this["IpAddress"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("BlankTemplate.xlsx")]
+        public string BlankTemplateFileName {
+            get {
+                return ((string)(this["BlankTemplateFileName"]));
+            }
+            set {
+                this["BlankTemplateFileName"] = value;
+            }
+        }
     }
 }

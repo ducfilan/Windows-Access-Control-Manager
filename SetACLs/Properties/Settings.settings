@@ -17,5 +17,8 @@
     <Setting Name="IpAddress" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="BlankTemplateFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">BlankTemplate.xlsx</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

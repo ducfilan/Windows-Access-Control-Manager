@@ -140,7 +140,7 @@ namespace SetACLs
 			}
 	        catch (Win32Exception)
 	        {
-		        _formManipulator.ShowError("Excel is not installed!");
+		        _formManipulator.ShowError("Tried to open the exported file but Excel is not installed!");
 	        }
         }
 
@@ -250,6 +250,33 @@ namespace SetACLs
         {
             Properties.Settings.Default.IpAddress = cbIpAddresses.SelectedItem.ToString();
             Properties.Settings.Default.Save();
+        }
+
+        private async void btnExportToTemplate_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+
+            progressBar.Value = 0;
+            var progress = new Progress<int>(v =>
+            {
+                progressBar.Value = v;
+            });
+
+            var exportIpAddress = cbIpAddresses.Text;
+            await Task.Run(() => _toolBusiness.ExportPermissionByTemplate(txtFolderPath.Text,
+                saveFileDialog.FileName,
+                txtDomain.Text,
+                exportIpAddress,
+                progress));
+
+            try
+            {
+                Process.Start(saveFileDialog.FileName);
+            }
+            catch (Win32Exception)
+            {
+                _formManipulator.ShowError("Tried to open the exported file but Excel is not installed!");
+            }
         }
     }
 }
