@@ -128,11 +128,18 @@ namespace SetACLs
             });
 
             var exportIpAddress = cbIpAddresses.Text;
-            await Task.Run(() => _toolBusiness.ExportPermission(txtFolderPath.Text,
-                saveFileDialog.FileName,
-                txtDomain.Text,
-                exportIpAddress,
-                progress));
+            try
+            {
+                await Task.Run(() => _toolBusiness.ExportPermission(txtFolderPath.Text,
+                    saveFileDialog.FileName,
+                    txtDomain.Text,
+                    exportIpAddress,
+                    progress));
+            }
+            catch (Exception exception)
+            {
+                _formManipulator.ShowError(exception.Message);
+            }
 
 	        try
 			{
@@ -263,11 +270,18 @@ namespace SetACLs
             });
 
             var exportIpAddress = cbIpAddresses.Text;
-            await Task.Run(() => _toolBusiness.ExportPermissionByTemplate(txtFolderPath.Text,
-                saveFileDialog.FileName,
-                txtDomain.Text,
-                exportIpAddress,
-                progress));
+            try
+            {
+                await Task.Run(() => _toolBusiness.ExportPermissionByTemplate(txtFolderPath.Text,
+                    saveFileDialog.FileName,
+                    txtDomain.Text,
+                    exportIpAddress,
+                    progress));
+            }
+            catch (Exception exception)
+            {
+                _formManipulator.ShowError(exception.Message);
+            }
 
             try
             {

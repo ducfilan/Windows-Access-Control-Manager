@@ -83,7 +83,7 @@ namespace SetACLs.Business
                     .ToList();
 
                 const int folderStartRow = 3;
-                const int accountRow = 2;
+                const int accountsListRow = 2;
 
                 var folderBaseCellStyle  = worksheet.Cells["A3"].Style;
                 var accountBaseCellStyle = worksheet.Cells["A2"].Style;
@@ -97,9 +97,7 @@ namespace SetACLs.Business
                     progress?.Report(50 + item.Index * 50 / permissionsSubFolders.Count);
 
                     var pathBeginWithRootFolder = item.Permissions.Key.Remove(0, permissionToCheckRootPath.Length);
-
                     var folderParts = pathBeginWithRootFolder.Split(new []{ '\\' }, StringSplitOptions.RemoveEmptyEntries);
-
                     if (folderParts.Length > folderMaxDepth)
                     {
                         worksheet.InsertColumn(folderMaxDepth + 1, folderParts.Length - folderMaxDepth);
@@ -118,7 +116,9 @@ namespace SetACLs.Business
                         if (!userList.ContainsKey(permission.Account))
                         {
                             userList.Add(permission.Account, accountsCount++);
-                            worksheet.Cells[accountRow, accountsCount + folderMaxDepth - 1].Value = permission.Account;
+
+                            // Print account name at the end.
+                            worksheet.Cells[accountsListRow, accountsCount + folderMaxDepth - 1].Value = permission.Account;
                             rightsCol = accountsCount + folderMaxDepth - 1;
                         }
                         else
