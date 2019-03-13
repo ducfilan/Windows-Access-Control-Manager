@@ -136,19 +136,53 @@ namespace SetACLs
                     exportIpAddress,
                     progress));
             }
+            catch (Win32Exception)
+            {
+                _formManipulator.ShowError("Tried to open the exported file but Excel is not installed!");
+            }
+            catch (InvalidOperationException)
+            {
+                _formManipulator.ShowError("Tried to save the exported file but the file is being opened by another process!");
+            }
             catch (Exception exception)
             {
                 _formManipulator.ShowError(exception.Message);
             }
+        }
 
-	        try
-			{
-				Process.Start(saveFileDialog.FileName);
-			}
-	        catch (Win32Exception)
-	        {
-		        _formManipulator.ShowError("Tried to open the exported file but Excel is not installed!");
-	        }
+        private async void btnExportToTemplate_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+
+            progressBar.Value = 0;
+            var progress = new Progress<int>(v =>
+            {
+                progressBar.Value = v;
+            });
+
+            var exportIpAddress = cbIpAddresses.Text;
+            try
+            {
+                await Task.Run(() => _toolBusiness.ExportPermissionByTemplate(txtFolderPath.Text,
+                    saveFileDialog.FileName,
+                    txtDomain.Text,
+                    exportIpAddress,
+                    progress));
+
+                Process.Start(saveFileDialog.FileName);
+            }
+            catch (Win32Exception)
+            {
+                _formManipulator.ShowError("Tried to open the exported file but Excel is not installed!");
+            }
+            catch (InvalidOperationException)
+            {
+                _formManipulator.ShowError("Tried to save the exported file but the file is being opened by another process!");
+            }
+            catch (Exception exception)
+            {
+                _formManipulator.ShowError(exception.Message);
+            }
         }
 
         private void btnImportTemplate_Click(object sender, EventArgs e)
@@ -257,40 +291,6 @@ namespace SetACLs
         {
             Properties.Settings.Default.IpAddress = cbIpAddresses.SelectedItem.ToString();
             Properties.Settings.Default.Save();
-        }
-
-        private async void btnExportToTemplate_Click(object sender, EventArgs e)
-        {
-            if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
-
-            progressBar.Value = 0;
-            var progress = new Progress<int>(v =>
-            {
-                progressBar.Value = v;
-            });
-
-            var exportIpAddress = cbIpAddresses.Text;
-            try
-            {
-                await Task.Run(() => _toolBusiness.ExportPermissionByTemplate(txtFolderPath.Text,
-                    saveFileDialog.FileName,
-                    txtDomain.Text,
-                    exportIpAddress,
-                    progress));
-            }
-            catch (Exception exception)
-            {
-                _formManipulator.ShowError(exception.Message);
-            }
-
-            try
-            {
-                Process.Start(saveFileDialog.FileName);
-            }
-            catch (Win32Exception)
-            {
-                _formManipulator.ShowError("Tried to open the exported file but Excel is not installed!");
-            }
         }
     }
 }
