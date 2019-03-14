@@ -337,8 +337,6 @@ namespace SetACLs
 
         private void chkOnlySubFolder_CheckedChanged(object sender, EventArgs e)
         {
-            btnRefreshFolder.PerformClick();
-
             Properties.Settings.Default.IsSubFolderOnly = ((CheckBox) sender).Checked;
             Properties.Settings.Default.Save();
         }
