@@ -83,6 +83,7 @@
     <Compile Include="Base\SingletonBase.cs" />
     <Compile Include="Business\DirectoryInfoExtractor.cs" />
     <Compile Include="Business\FormManipulator.cs" />
+    <Compile Include="Business\LogWriter.cs" />
     <Compile Include="Business\NetworkInfoExtractor.cs" />
     <Compile Include="Business\PermissionManipulator.cs" />
     <Compile Include="Business\StartAsAdminManipulator.cs" />

@@ -79,8 +79,8 @@ namespace SetACLs.Business
             foreach (FileSystemAccessRule accessRule in accessRules)
             {
                 if (string.IsNullOrWhiteSpace(domain) ||
-                    !accessRule.IdentityReference.Value.StartsWith(domain) &&
-                    !accessRule.IdentityReference.Value.EndsWith(domain))
+                    !accessRule.IdentityReference.Value.StartsWith(domain + @"\", StringComparison.OrdinalIgnoreCase) &&
+                    !accessRule.IdentityReference.Value.EndsWith("@" + domain, StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }
@@ -96,8 +96,8 @@ namespace SetACLs.Business
         {
             return GetDirectorySecurity(path)?.Cast<FileSystemAccessRule>()
                 .Where(p => string.IsNullOrEmpty(domain) ||
-                            p.IdentityReference.Value.StartsWith(domain, StringComparison.OrdinalIgnoreCase) ||
-                            p.IdentityReference.Value.EndsWith(domain, StringComparison.OrdinalIgnoreCase));
+                            p.IdentityReference.Value.StartsWith(domain + @"\", StringComparison.OrdinalIgnoreCase) ||
+                            p.IdentityReference.Value.EndsWith("@" + domain, StringComparison.OrdinalIgnoreCase));
         }
 
         public IEnumerable<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>> GetPermissionsSubFolders(string parentPath, string domain, bool isIncludeRootFolder = true)
