@@ -23,5 +23,9 @@ namespace SetACLs.Business
             return totalSize_Byte;
         }
 
+        public static string GetBaseFolderPath(string path, bool isGetParent = true)
+        {
+            return isGetParent ? new DirectoryInfo(path).Parent?.FullName : path;
+        }
     }
 }

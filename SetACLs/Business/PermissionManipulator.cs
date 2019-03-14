@@ -49,7 +49,7 @@ namespace SetACLs.Business
 					info.SetAccessControl(accessControl);
 				}
 				catch
-				{
+                {
 					throw new Exception("Your template's data may have been wrong! Check the parameters:" + 
                                         " \n+ Username:   {" + username +
                                         "}\n+ Permission: {" + permission.Permission +
@@ -59,28 +59,35 @@ namespace SetACLs.Business
 			}
 		}
 
-        public void EvictAllRightsFromDomainUsers(string basePath, string domain)
+        public void EvictAllRightsFolderAndSubFoldersFromDomainUsers(string basePath, string domain)
         {
+            EvictAllRightsCurrentFolderFromDomainUsers(basePath, domain);
+
             foreach (var info in new DirectoryInfo(basePath).GetDirectories())
             {
-                var accessControl = info.GetAccessControl();
-                var accessRules = accessControl.GetAccessRules(true, false, typeof(NTAccount));
+                EvictAllRightsCurrentFolderFromDomainUsers(info.FullName, domain);
+                EvictAllRightsFolderAndSubFoldersFromDomainUsers(info.FullName, domain);
+            }
+        }
 
-                foreach (FileSystemAccessRule accessRule in accessRules)
+        public void EvictAllRightsCurrentFolderFromDomainUsers(string path, string domain)
+        {
+            var info = new DirectoryInfo(path);
+            var accessControl = info.GetAccessControl();
+            var accessRules = accessControl.GetAccessRules(true, false, typeof(NTAccount));
+
+            foreach (FileSystemAccessRule accessRule in accessRules)
+            {
+                if (string.IsNullOrWhiteSpace(domain) || !accessRule.IdentityReference.Value.StartsWith(domain))
                 {
-                    if (string.IsNullOrWhiteSpace(domain) || !accessRule.IdentityReference.Value.StartsWith(domain))
-                    {
-                        continue;
-                    }
-
-                    accessControl.RemoveAccessRule(accessRule);
-                    accessControl.SetAccessRuleProtection(true, true);
+                    continue;
                 }
 
-                info.SetAccessControl(accessControl);
-
-                EvictAllRightsFromDomainUsers(info.FullName, domain);
+                accessControl.RemoveAccessRule(accessRule);
+                accessControl.SetAccessRuleProtection(true, true);
             }
+
+            info.SetAccessControl(accessControl);
         }
 
         public static IEnumerable<FileSystemAccessRule> GetPermissionsCurrentFolder(string path, string domain)

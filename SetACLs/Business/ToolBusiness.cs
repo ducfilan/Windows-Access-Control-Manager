@@ -256,20 +256,24 @@ namespace SetACLs.Business
         public void ApplyPermissionFromImportedTemplate(string path, string domain, TreeNodeCollection importedRootNodeChildren,
 			List<FolderPermission> importedFolderPermissions)
         {
-            _permissionManipulator.EvictAllRightsFromDomainUsers(path, domain);
-
             foreach (TreeNode node in importedRootNodeChildren)
 			{
 				var currentFolderPermissions = importedFolderPermissions.First(p => p.NodeKey == node.Name);
 
 				var subFolder = path + @"\" + node.Text;
-				SetIndividualPermission(subFolder, domain, currentFolderPermissions);
+
+                _permissionManipulator.EvictAllRightsCurrentFolderFromDomainUsers(subFolder, domain);
+                SetIndividualPermission(subFolder, domain, currentFolderPermissions);
 				ApplyPermissionFromImportedTemplate(subFolder, domain, node.Nodes, importedFolderPermissions);
 			}
         }
 
-        public void SetIndividualPermission(string folderPath, string domain, FolderPermission permissions)
+        public void SetIndividualPermission(string folderPath, string domain, FolderPermission permissions, bool isEvictCurrentPermissions = false)
         {
+            if (isEvictCurrentPermissions)
+            {
+                _permissionManipulator.EvictAllRightsCurrentFolderFromDomainUsers(folderPath, domain);
+            }
             foreach (var permission in permissions.UserPermission)
             {
                 _permissionManipulator.AssignPermission(folderPath, domain, permission);

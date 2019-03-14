@@ -89,6 +89,12 @@ namespace SetACLs
 
         private async void FormMain_Load(object sender, EventArgs e)
         {
+
+            if (!StartAsAdminManipulator.IsAdmin())
+            {
+                StartAsAdminManipulator.RestartElevated();
+            }
+
             txtFolderPath.Text       = Properties.Settings.Default.FolderPath;
             txtDomain.Text           = Properties.Settings.Default.Domain;
             txtTemplatePath.Text     = Properties.Settings.Default.TemplatePath;
@@ -114,8 +120,8 @@ namespace SetACLs
         }
 
         private async void btnRefreshFolder_Click(object sender, EventArgs e)
-		{
-			await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, txtFolderPath.Text));
+        {
+            await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, txtFolderPath.Text));
 		}
 
         private async void btnExportPermission_Click(object sender, EventArgs e)
@@ -131,11 +137,14 @@ namespace SetACLs
             var exportIpAddress = cbIpAddresses.Text;
             try
             {
-                await Task.Run(() => _toolBusiness.ExportPermission(txtFolderPath.Text,
+                await Task.Run(() => _toolBusiness.ExportPermission(
+                    DirectoryInfoExtractor.GetBaseFolderPath(txtFolderPath.Text),
                     saveFileDialog.FileName,
                     txtDomain.Text,
                     exportIpAddress,
                     progress));
+
+                Process.Start(saveFileDialog.FileName);
             }
             catch (Win32Exception)
             {
@@ -164,7 +173,8 @@ namespace SetACLs
             var exportIpAddress = cbIpAddresses.Text;
             try
             {
-                await Task.Run(() => _toolBusiness.ExportPermissionByTemplate(txtFolderPath.Text,
+                await Task.Run(() => _toolBusiness.ExportPermissionByTemplate(
+                    DirectoryInfoExtractor.GetBaseFolderPath(txtFolderPath.Text),
                     saveFileDialog.FileName,
                     txtDomain.Text,
                     exportIpAddress,
@@ -213,7 +223,9 @@ namespace SetACLs
 		private void trvFolderTree_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			var permissions = PermissionManipulator
-			                      .GetPermissionsCurrentFolder(txtFolderPath.Text + @"\" + e.Node.FullPath, txtDomain.Text) 
+			                      .GetPermissionsCurrentFolder(
+                                      DirectoryInfoExtractor.GetBaseFolderPath(txtFolderPath.Text, !chkOnlySubFolder.Checked) + @"\" + e.Node.FullPath, 
+                                      txtDomain.Text) 
 			                  ?? new List<FileSystemAccessRule>();
 
 			var list = new BindingList<ExportInfo>(permissions.Select(_toolBusiness.ToExportInfo).ToList());
@@ -238,15 +250,9 @@ namespace SetACLs
 			if (_formManipulator.ShowWarning("You're gonna create a folder tree based on the imported folder structure. Are you sure?") == 
                 DialogResult.No) return;
 
-            var baseFolderPath = txtFolderPath.Text;
-            if (chkOnlySubFolder.Checked)
-            {
-                baseFolderPath = new DirectoryInfo(baseFolderPath).Parent?.FullName;
-            }
+            CreateFolder(DirectoryInfoExtractor.GetBaseFolderPath(txtFolderPath.Text, chkOnlySubFolder.Checked), trvImportedDirectory.Nodes);
 
-            CreateFolder(baseFolderPath, trvImportedDirectory.Nodes);
-
-			await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, baseFolderPath));
+			await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, txtFolderPath.Text));
 
             _formManipulator.ShowMessage("Folders have been created successfully!");
 		}
@@ -270,16 +276,14 @@ namespace SetACLs
 				_formManipulator.ShowMessage("Please import template first!");
 				return;
             }
-
-            var baseFolderPath = txtFolderPath.Text;
-            if (chkOnlySubFolder.Checked)
-            {
-                baseFolderPath = new DirectoryInfo(baseFolderPath).Parent?.FullName;
-            }
-
+            
             try
 			{
-				_toolBusiness.ApplyPermissionFromImportedTemplate(baseFolderPath, txtDomain.Text, ImportedRootNodeChildren, ImportedFolderPermissions);
+				_toolBusiness.ApplyPermissionFromImportedTemplate(
+                    DirectoryInfoExtractor.GetBaseFolderPath(txtFolderPath.Text), 
+                    txtDomain.Text, 
+                    ImportedRootNodeChildren, 
+                    ImportedFolderPermissions);
 
 				_formManipulator.ShowInformation("Permissions are successfully set!");
 			}
@@ -326,8 +330,12 @@ namespace SetACLs
 
             try
             {
-                _toolBusiness.SetIndividualPermission(txtFolderPath.Text + @"\" + trvFolderTree.SelectedNode.FullPath,
-                    txtDomain.Text, permissions);
+                _toolBusiness.SetIndividualPermission(
+                    txtFolderPath.Text + @"\" + trvFolderTree.SelectedNode.FullPath,
+                    txtDomain.Text, 
+                    permissions);
+
+                _formManipulator.ShowInformation("Permissions are successfully set!");
             }
             catch (Exception exception)
             {

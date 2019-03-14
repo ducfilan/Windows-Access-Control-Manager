@@ -430,6 +430,8 @@ namespace SetACLs
             // 
             this.chkOnlySubFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.chkOnlySubFolder.AutoSize = true;
+            this.chkOnlySubFolder.Checked = true;
+            this.chkOnlySubFolder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkOnlySubFolder.Location = new System.Drawing.Point(762, 564);
             this.chkOnlySubFolder.Name = "chkOnlySubFolder";
             this.chkOnlySubFolder.Size = new System.Drawing.Size(110, 16);
@@ -483,7 +485,6 @@ namespace SetACLs
             this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         protected override void OnLoad(EventArgs e)

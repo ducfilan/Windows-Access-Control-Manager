@@ -85,6 +85,7 @@
     <Compile Include="Business\FormManipulator.cs" />
     <Compile Include="Business\NetworkInfoExtractor.cs" />
     <Compile Include="Business\PermissionManipulator.cs" />
+    <Compile Include="Business\StartAsAdminManipulator.cs" />
     <Compile Include="Const\Permissions.cs" />
     <Compile Include="Model\ExportInfo.cs" />
     <Compile Include="Model\FolderPermission.cs" />
