@@ -33,16 +33,19 @@ namespace SetACLs.Business
                 var isHeaderPrinted = false;
                 var addedRowsCountToPrint = 0;
                 progress?.Report(50);
+
                 var permissionsSubFolders = _permissionManipulator
                     .GetPermissionsSubFolders(permissionToCheckRootPath, domain)
                     .Select((p, i) => new { Index = i + 1, Permissions = p })
                     .ToList();
 
+                var replaceByDomainPart = new DirectoryInfo(permissionToCheckRootPath).Parent?.FullName??string.Empty;
+
                 foreach (var item in permissionsSubFolders)
                 {
                     progress?.Report(50 + item.Index * 50 / permissionsSubFolders.Count);
 
-                    var outputServerPath = item.Permissions.Key.Replace(permissionToCheckRootPath, @"\\" + serverIpAddress);
+                    var outputServerPath = item.Permissions.Key.Replace(replaceByDomainPart, @"\\" + serverIpAddress);
 
                     var rowToFillFolderInfo = item.Index + addedRowsCountToPrint + (isHeaderPrinted ? 0 : 1);
 
@@ -96,7 +99,8 @@ namespace SetACLs.Business
                 {
                     progress?.Report(50 + item.Index * 50 / permissionsSubFolders.Count);
 
-                    var pathBeginWithRootFolder = item.Permissions.Key.Remove(0, permissionToCheckRootPath.Length);
+                    var pathBeginWithRootFolder = item.Permissions.Key.Remove(0, 
+                        new DirectoryInfo(permissionToCheckRootPath).Parent?.FullName.Length??0);
                     var folderParts = pathBeginWithRootFolder.Split(new []{ '\\' }, StringSplitOptions.RemoveEmptyEntries);
                     if (folderParts.Length > folderMaxDepth)
                     {

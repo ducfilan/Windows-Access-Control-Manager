@@ -138,7 +138,7 @@ namespace SetACLs
             try
             {
                 await Task.Run(() => _toolBusiness.ExportPermission(
-                    DirectoryInfoExtractor.GetBaseFolderPath(txtFolderPath.Text),
+                    txtFolderPath.Text,
                     saveFileDialog.FileName,
                     txtDomain.Text,
                     exportIpAddress,
@@ -174,7 +174,7 @@ namespace SetACLs
             try
             {
                 await Task.Run(() => _toolBusiness.ExportPermissionByTemplate(
-                    DirectoryInfoExtractor.GetBaseFolderPath(txtFolderPath.Text),
+                    txtFolderPath.Text,
                     saveFileDialog.FileName,
                     txtDomain.Text,
                     exportIpAddress,

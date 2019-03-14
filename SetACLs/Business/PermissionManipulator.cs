@@ -10,9 +10,9 @@ using SetACLs.Model;
 
 namespace SetACLs.Business
 {
-	public class PermissionManipulator
-	{
-		public static AuthorizationRuleCollection GetDirectorySecurity(string path)
+    public class PermissionManipulator
+    {
+        public static AuthorizationRuleCollection GetDirectorySecurity(string path)
         {
             try
             {
@@ -20,7 +20,7 @@ namespace SetACLs.Business
                     .GetAccessControl()
                     .GetAccessRules(true, true, typeof(NTAccount));
             }
-            catch (UnauthorizedAccessException )
+            catch (UnauthorizedAccessException)
             {
                 // Ignore.
             }
@@ -28,36 +28,36 @@ namespace SetACLs.Business
             return null;
         }
 
-		public void AssignPermission(string folderPath, string domain, UserPermission permission)
-		{
-			foreach (var username in Regex.Split(permission.Username, "[;, ]").Where(p => !string.IsNullOrWhiteSpace(p)))
-			{
-				try
-				{
-					var fileSystemRights = Permissions.Instance.All[permission.Permission].Item1;
-					var accessControlType = Permissions.Instance.All[permission.Permission].Item2;
+        public void AssignPermission(string folderPath, string domain, UserPermission permission)
+        {
+            foreach (var username in Regex.Split(permission.Username, "[;, ]").Where(p => !string.IsNullOrWhiteSpace(p)))
+            {
+                try
+                {
+                    var fileSystemRights = Permissions.Instance.All[permission.Permission].Item1;
+                    var accessControlType = Permissions.Instance.All[permission.Permission].Item2;
 
-					var info = new DirectoryInfo(folderPath);
-					var accessControl = info.GetAccessControl();
+                    var info = new DirectoryInfo(folderPath);
+                    var accessControl = info.GetAccessControl();
 
                     accessControl.AddAccessRule(new FileSystemAccessRule(
-						domain + @"\" + username,
-						fileSystemRights,
-						InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
-						PropagationFlags.None,
-						accessControlType));
-					info.SetAccessControl(accessControl);
-				}
-				catch
+                        domain + @"\" + username,
+                        fileSystemRights,
+                        InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+                        PropagationFlags.None,
+                        accessControlType));
+                    info.SetAccessControl(accessControl);
+                }
+                catch
                 {
-					throw new Exception("Your template's data may have been wrong! Check the parameters:" + 
+                    throw new Exception("Your template's data may have been wrong! Check the parameters:" +
                                         " \n+ Username:   {" + username +
                                         "}\n+ Permission: {" + permission.Permission +
-                                        "}\n+ Domain:     {" + domain + 
+                                        "}\n+ Domain:     {" + domain +
                                         "}\n+ Folder:     {" + folderPath + "}");
-				}
-			}
-		}
+                }
+            }
+        }
 
         public void EvictAllRightsFolderAndSubFoldersFromDomainUsers(string basePath, string domain)
         {
@@ -78,7 +78,9 @@ namespace SetACLs.Business
 
             foreach (FileSystemAccessRule accessRule in accessRules)
             {
-                if (string.IsNullOrWhiteSpace(domain) || !accessRule.IdentityReference.Value.StartsWith(domain))
+                if (string.IsNullOrWhiteSpace(domain) ||
+                    !accessRule.IdentityReference.Value.StartsWith(domain) &&
+                    !accessRule.IdentityReference.Value.EndsWith(domain))
                 {
                     continue;
                 }
@@ -96,24 +98,29 @@ namespace SetACLs.Business
                 .Where(p => string.IsNullOrEmpty(domain) ||
                             p.IdentityReference.Value.StartsWith(domain, StringComparison.OrdinalIgnoreCase) ||
                             p.IdentityReference.Value.EndsWith(domain, StringComparison.OrdinalIgnoreCase));
-		}
-
-        public IEnumerable<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>> GetPermissionsSubFolders(string parentPath, string domain)
-        {
-	        var allFoldersPermissions = new List<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>>();
-
-	        foreach (var item in Directory.GetDirectories(parentPath)
-		        .Select((d, i) => new { Index = i, SubDirectory = d }))
-	        {
-		        var subDirectory = item.SubDirectory;
-
-		        var currentFolderPermissions = GetPermissionsCurrentFolder(subDirectory, domain);
-
-		        allFoldersPermissions.Add(new KeyValuePair<string, IEnumerable<FileSystemAccessRule>>(subDirectory, currentFolderPermissions));
-		        allFoldersPermissions.AddRange(GetPermissionsSubFolders(subDirectory, domain));
-	        }
-
-	        return allFoldersPermissions;
         }
-	}
+
+        public IEnumerable<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>> GetPermissionsSubFolders(string parentPath, string domain, bool isIncludeRootFolder = true)
+        {
+            var allFoldersPermissions = new List<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>>();
+            if (isIncludeRootFolder)
+            {
+                allFoldersPermissions.Add(new KeyValuePair<string, IEnumerable<FileSystemAccessRule>>(parentPath,
+                    GetPermissionsCurrentFolder(parentPath, domain)));
+            }
+
+            foreach (var item in Directory.GetDirectories(parentPath)
+                .Select((d, i) => new { Index = i, SubDirectory = d }))
+            {
+                var subDirectory = item.SubDirectory;
+
+                var currentFolderPermissions = GetPermissionsCurrentFolder(subDirectory, domain);
+
+                allFoldersPermissions.Add(new KeyValuePair<string, IEnumerable<FileSystemAccessRule>>(subDirectory, currentFolderPermissions));
+                allFoldersPermissions.AddRange(GetPermissionsSubFolders(subDirectory, domain, false));
+            }
+
+            return allFoldersPermissions;
+        }
+    }
 }
