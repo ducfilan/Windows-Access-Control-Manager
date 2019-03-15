@@ -12,6 +12,8 @@ namespace SetACLs.Business
 {
     public class PermissionManipulator
     {
+        private static readonly log4net.ILog Logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public static AuthorizationRuleCollection GetDirectorySecurity(string path)
         {
             try
@@ -48,13 +50,15 @@ namespace SetACLs.Business
                         accessControlType));
                     info.SetAccessControl(accessControl);
                 }
-                catch
+                catch(Exception exception)
                 {
-                    throw new Exception("Your template's data may have been wrong! Check the parameters:" +
-                                        " \n+ Username:   {" + username +
-                                        "}\n+ Permission: {" + permission.Permission +
-                                        "}\n+ Domain:     {" + domain +
-                                        "}\n+ Folder:     {" + folderPath + "}");
+                    Logger.Error(exception);
+
+                    Logger.Info("Parameters:" +
+                                 " \n+ Username:   {" + username +
+                                 "}\n+ Permission: {" + permission.Permission +
+                                 "}\n+ Domain:     {" + domain +
+                                 "}\n+ Folder:     {" + folderPath + "}");
                 }
             }
         }
@@ -65,7 +69,6 @@ namespace SetACLs.Business
 
             foreach (var info in new DirectoryInfo(basePath).GetDirectories())
             {
-                EvictAllRightsCurrentFolderFromDomainUsers(info.FullName, domain);
                 EvictAllRightsFolderAndSubFoldersFromDomainUsers(info.FullName, domain);
             }
         }

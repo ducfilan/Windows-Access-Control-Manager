@@ -14,6 +14,8 @@ namespace SetACLs
 {
     public partial class FormMain : Form
     {
+        private static readonly log4net.ILog Logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private ToolBusiness _toolBusiness;
         private FormManipulator _formManipulator;
 
@@ -23,6 +25,32 @@ namespace SetACLs
         public FormMain()
         {
             InitializeComponent();
+        }
+
+        private async void FormMain_Load(object sender, EventArgs e)
+        {
+
+            if (!StartAsAdminManipulator.IsAdmin())
+            {
+                StartAsAdminManipulator.RestartElevated();
+            }
+
+            txtFolderPath.Text = Properties.Settings.Default.FolderPath;
+            txtDomain.Text = Properties.Settings.Default.Domain;
+            txtTemplatePath.Text = Properties.Settings.Default.TemplatePath;
+            chkOnlySubFolder.Checked = Properties.Settings.Default.IsSubFolderOnly;
+
+            _toolBusiness = new ToolBusiness
+            {
+                TemplatePath = txtTemplatePath.Text
+            };
+
+            _formManipulator = new FormManipulator();
+
+            var ipAddresses = NetworkInfoExtractor.GetLocalIpAddress();
+            PopulateComboBox(cbIpAddresses, ipAddresses, Properties.Settings.Default.IpAddress);
+
+            await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, txtFolderPath.Text));
         }
 
         private async void btnBrowseFolder_Click(object sender, EventArgs e)
@@ -86,32 +114,6 @@ namespace SetACLs
 
             return directoryNode;
         }
-
-        private async void FormMain_Load(object sender, EventArgs e)
-        {
-
-            if (!StartAsAdminManipulator.IsAdmin())
-            {
-                StartAsAdminManipulator.RestartElevated();
-            }
-
-            txtFolderPath.Text       = Properties.Settings.Default.FolderPath;
-            txtDomain.Text           = Properties.Settings.Default.Domain;
-            txtTemplatePath.Text     = Properties.Settings.Default.TemplatePath;
-            chkOnlySubFolder.Checked = Properties.Settings.Default.IsSubFolderOnly;
-
-            _toolBusiness = new ToolBusiness
-            {
-                TemplatePath = txtTemplatePath.Text
-            };
-
-            _formManipulator = new FormManipulator();
-
-            var ipAddresses = NetworkInfoExtractor.GetLocalIpAddress();
-            PopulateComboBox(cbIpAddresses, ipAddresses, Properties.Settings.Default.IpAddress);
-
-            await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, txtFolderPath.Text));
-		}
 
         private void PopulateComboBox(ComboBox comboBox, IEnumerable<string> items, string selectedItemText = null)
         {
@@ -271,7 +273,9 @@ namespace SetACLs
 			if (_formManipulator.ShowWarning("You're gonna assign all permissions based on the imported template. Are you sure?") == 
                 DialogResult.No) return;
 
-			if (ImportedRootNodeChildren == null)
+            Logger.Info("BEGIN SETTING ALL PERMISSIONS FROM TEMPLATE");
+
+            if (ImportedRootNodeChildren == null)
 			{
 				_formManipulator.ShowMessage("Please import template first!");
 				return;

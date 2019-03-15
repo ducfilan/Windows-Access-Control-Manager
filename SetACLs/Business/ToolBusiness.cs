@@ -14,8 +14,10 @@ using SetACLs.Model;
 namespace SetACLs.Business
 {
 	public class ToolBusiness
-	{
-		public string TemplatePath { get; set; }
+    {
+        private static readonly log4net.ILog Logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        public string TemplatePath { get; set; }
 		private readonly PermissionManipulator _permissionManipulator;
         public int FolderDepth { get; set; }
 
@@ -265,6 +267,11 @@ namespace SetACLs.Business
 				var currentFolderPermissions = importedFolderPermissions.First(p => p.NodeKey == node.Name);
 
 				var subFolder = path + @"\" + node.Text;
+                if (!Directory.Exists(subFolder))
+                {
+                    Logger.Error("Folder is not exists: {" + subFolder + "}");
+                    continue;
+                }
 
                 _permissionManipulator.EvictAllRightsCurrentFolderFromDomainUsers(subFolder, domain);
                 SetIndividualPermission(subFolder, domain, currentFolderPermissions);
