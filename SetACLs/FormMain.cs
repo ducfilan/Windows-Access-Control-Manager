@@ -32,7 +32,7 @@ namespace SetACLs
 
             if (!StartAsAdminManipulator.IsAdmin())
             {
-                StartAsAdminManipulator.RestartElevated();
+                //StartAsAdminManipulator.RestartElevated();
             }
 
             txtFolderPath.Text = Properties.Settings.Default.FolderPath;
@@ -66,11 +66,7 @@ namespace SetACLs
         {
             if (string.IsNullOrEmpty(folderPath)) return;
 
-            progressBar.BeginInvoke((MethodInvoker) delegate
-			{
-				progressBar.Style = ProgressBarStyle.Marquee;
-				progressBar.MarqueeAnimationSpeed = 30;
-			});
+            _formManipulator.StartMarqueeProgressBarAsync(progressBar);
 
 			if (!Directory.Exists(folderPath))
             {
@@ -268,7 +264,7 @@ namespace SetACLs
 			}
 		}
 
-		private void BtnAssignPermission_Click(object sender, EventArgs e)
+		private async void BtnAssignPermission_Click(object sender, EventArgs e)
 		{
 			if (_formManipulator.ShowWarning("You're gonna assign all permissions based on the imported template. Are you sure?") == 
                 DialogResult.No) return;
@@ -280,14 +276,17 @@ namespace SetACLs
 				_formManipulator.ShowMessage("Please import template first!");
 				return;
             }
-            
+
+            _formManipulator.StartMarqueeProgressBar(progressBar);
+
             try
-			{
-				_toolBusiness.ApplyPermissionFromImportedTemplate(
-                    DirectoryInfoExtractor.GetBaseFolderPath(txtFolderPath.Text), 
-                    txtDomain.Text, 
-                    ImportedRootNodeChildren, 
-                    ImportedFolderPermissions);
+            {
+                await Task.Run(() =>
+                    _toolBusiness.ApplyPermissionFromImportedTemplate(
+                        DirectoryInfoExtractor.GetBaseFolderPath(txtFolderPath.Text),
+                        txtDomain.Text,
+                        ImportedRootNodeChildren,
+                        ImportedFolderPermissions));
 
 				_formManipulator.ShowInformation("Permissions are successfully set!");
 			}

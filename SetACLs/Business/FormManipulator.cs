@@ -27,5 +27,33 @@ namespace SetACLs.Business
             MessageBox.Show(message, @"Done", MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
+
+        public void StartMarqueeProgressBar(ProgressBar progressBar)
+        {
+            progressBar.Style = ProgressBarStyle.Marquee;
+            progressBar.MarqueeAnimationSpeed = 30;
+        }
+
+        public void StartMarqueeProgressBarAsync(ProgressBar progressBar)
+        {
+            progressBar.BeginInvoke((MethodInvoker)delegate
+            {
+                progressBar.Style = ProgressBarStyle.Marquee;
+                progressBar.MarqueeAnimationSpeed = 30;
+            });
+        }
+
+        public void StopMarqueeProgressBar(ProgressBar progressBar)
+        {
+            progressBar.Style = ProgressBarStyle.Blocks;
+        }
+
+        public void StopMarqueeProgressBarAsync(ProgressBar progressBar)
+        {
+            progressBar.BeginInvoke((MethodInvoker)delegate
+            {
+                progressBar.Style = ProgressBarStyle.Blocks;
+            });
+        }
     }
 }
