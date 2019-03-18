@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using SetACLs.Business;
 using SetACLs.Model;
 using System.Threading.Tasks;
+using RoboSharp;
 
 namespace SetACLs
 {
@@ -33,6 +34,7 @@ namespace SetACLs
             if (!StartAsAdminManipulator.IsAdmin())
             {
                 StartAsAdminManipulator.RestartElevated();
+                return;
             }
 
             txtFolderPath.Text = Properties.Settings.Default.FolderPath;
@@ -350,6 +352,58 @@ namespace SetACLs
         {
             Properties.Settings.Default.IsSubFolderOnly = ((CheckBox) sender).Checked;
             Properties.Settings.Default.Save();
+        }
+
+        private void btnCopyPerformCopying_Click(object sender, EventArgs e)
+        {
+            if (_formManipulator.ShowWarning("Are you sure?") ==
+                DialogResult.No) return;
+
+            var backup = new RoboCommand();
+
+            backup.OnFileProcessed += backup_OnFileProcessed;
+            backup.OnCommandCompleted += backup_OnCommandCompleted;
+
+            backup.CopyOptions.Source = txtCopySourceFolderPath.Text;
+            backup.CopyOptions.Destination = txtCopyDestinationFolderPath.Text;
+            backup.CopyOptions.CopySubdirectories = true;
+            backup.CopyOptions.UseUnbufferedIo = true;
+
+            backup.RetryOptions.RetryCount = 1;
+            backup.RetryOptions.RetryWaitTime = 2;
+            backup.Start();
+        }
+
+        void backup_OnFileProcessed(object sender, FileProcessedEventArgs e)
+        {
+            BeginInvoke((Action)(() =>
+            {
+                txtCopyProcessingOperation.Text = e.ProcessedFile.FileClass;
+                txtCopyProcessingFileName.Text = e.ProcessedFile.Name;
+                txtCopyProcessingFileSize.Text = e.ProcessedFile.Size / Math.Pow(1024, 3) + @" GB";
+            }));
+        }
+
+        void backup_OnCommandCompleted(object sender, RoboCommandCompletedEventArgs e)
+        {
+            BeginInvoke((Action)(() =>
+            {
+                _formManipulator.ShowInformation("Copying process has been done!");
+            }));
+        }
+
+        private void btnCopyBrowseSourceFolder_Click(object sender, EventArgs e)
+        {
+            if (folderBrowserDialog.ShowDialog() != DialogResult.OK) return;
+
+            txtCopySourceFolderPath.Text = folderBrowserDialog.SelectedPath;
+        }
+
+        private void btnCopyBrowseDestFolder_Click(object sender, EventArgs e)
+        {
+            if (folderBrowserDialog.ShowDialog() != DialogResult.OK) return;
+
+            txtCopyDestinationFolderPath.Text = folderBrowserDialog.SelectedPath;
         }
     }
 }
