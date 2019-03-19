@@ -148,7 +148,7 @@ namespace SetACLs
             // 
             // groupBox5
             // 
-            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox5.Controls.Add(this.txtCopyProcessingFileSize);
             this.groupBox5.Controls.Add(this.label8);
@@ -165,7 +165,7 @@ namespace SetACLs
             // 
             // txtCopyProcessingFileSize
             // 
-            this.txtCopyProcessingFileSize.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtCopyProcessingFileSize.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCopyProcessingFileSize.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtCopyProcessingFileSize.Location = new System.Drawing.Point(102, 70);
@@ -185,13 +185,14 @@ namespace SetACLs
             // 
             // txtCopyProcessingFileName
             // 
-            this.txtCopyProcessingFileName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtCopyProcessingFileName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCopyProcessingFileName.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtCopyProcessingFileName.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtCopyProcessingFileName.Location = new System.Drawing.Point(102, 47);
             this.txtCopyProcessingFileName.Name = "txtCopyProcessingFileName";
             this.txtCopyProcessingFileName.ReadOnly = true;
-            this.txtCopyProcessingFileName.Size = new System.Drawing.Size(1055, 12);
+            this.txtCopyProcessingFileName.Size = new System.Drawing.Size(1055, 15);
             this.txtCopyProcessingFileName.TabIndex = 4;
             // 
             // label7
@@ -205,7 +206,7 @@ namespace SetACLs
             // 
             // txtCopyProcessingOperation
             // 
-            this.txtCopyProcessingOperation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtCopyProcessingOperation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCopyProcessingOperation.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtCopyProcessingOperation.Location = new System.Drawing.Point(102, 24);
@@ -248,7 +249,7 @@ namespace SetACLs
             // 
             // txtCopyDestinationFolderPath
             // 
-            this.txtCopyDestinationFolderPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtCopyDestinationFolderPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCopyDestinationFolderPath.Location = new System.Drawing.Point(75, 35);
             this.txtCopyDestinationFolderPath.Name = "txtCopyDestinationFolderPath";
@@ -257,7 +258,7 @@ namespace SetACLs
             // 
             // txtCopySourceFolderPath
             // 
-            this.txtCopySourceFolderPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtCopySourceFolderPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCopySourceFolderPath.Location = new System.Drawing.Point(75, 8);
             this.txtCopySourceFolderPath.Name = "txtCopySourceFolderPath";
@@ -481,8 +482,8 @@ namespace SetACLs
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 4;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
@@ -594,6 +595,7 @@ namespace SetACLs
             // trvImportedDirectory
             // 
             this.trvImportedDirectory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trvImportedDirectory.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.trvImportedDirectory.Location = new System.Drawing.Point(3, 15);
             this.trvImportedDirectory.Name = "trvImportedDirectory";
             this.trvImportedDirectory.Size = new System.Drawing.Size(280, 260);
@@ -614,6 +616,7 @@ namespace SetACLs
             // trvFolderTree
             // 
             this.trvFolderTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trvFolderTree.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.trvFolderTree.Location = new System.Drawing.Point(3, 15);
             this.trvFolderTree.Name = "trvFolderTree";
             this.trvFolderTree.Size = new System.Drawing.Size(280, 260);

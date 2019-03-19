@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -273,8 +274,8 @@ namespace SetACLs.Business
                     continue;
                 }
 
-                _permissionManipulator.EvictAllRightsCurrentFolderFromDomainUsers(subFolder, domain);
-                SetIndividualPermission(subFolder, domain, currentFolderPermissions);
+                Task.Run(() => SetIndividualPermission(subFolder, domain, currentFolderPermissions, true));
+
 				ApplyPermissionFromImportedTemplate(subFolder, domain, node.Nodes, importedFolderPermissions);
 			}
         }

@@ -79,14 +79,14 @@ namespace SetACLs
             var rootDirectoryInfo = new DirectoryInfo(folderPath);
             var nodes = await Task.Run(() => CreateDirectoryNode(rootDirectoryInfo));
 
-            treeView.BeginInvoke((MethodInvoker) delegate
+            BeginInvoke((MethodInvoker) delegate
 			{
 				treeView.Nodes.Clear();
 				treeView.Nodes.AddRange(nodes.Nodes.Cast<TreeNode>().ToArray());
 				treeView.ExpandAll();
 			});
 
-            progressBar.BeginInvoke((MethodInvoker)delegate
+            BeginInvoke((MethodInvoker)delegate
             {
 	            progressBar.Style = ProgressBarStyle.Blocks;
             });
@@ -290,6 +290,7 @@ namespace SetACLs
                         ImportedRootNodeChildren,
                         ImportedFolderPermissions));
 
+                _formManipulator.StopMarqueeProgressBar(progressBar);
 				_formManipulator.ShowInformation("Permissions are successfully set!");
 			}
 			catch(Exception ex)

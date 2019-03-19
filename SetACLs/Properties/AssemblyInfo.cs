@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("SetACLs")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Access Control Manager (Permission) In Windows")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("HP Inc.")]
+[assembly: AssemblyCompany("Duc Filan Inc.")]
 [assembly: AssemblyProduct("SetACLs")]
-[assembly: AssemblyCopyright("Copyright © HP Inc. 2019")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("Copyright © Duc Filan Inc. 2019")]
+[assembly: AssemblyTrademark("Duc Filan Inc.")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
