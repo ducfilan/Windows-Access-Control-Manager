@@ -197,7 +197,7 @@ namespace SetACLs.Business
             using (var excel = new ExcelPackage(new FileInfo(TemplatePath)))
             {
                 var worksheet = excel.Workbook.Worksheets[Properties.Settings.Default.TemplateSheetName];
-                FolderDepth = CountMergedCells(worksheet.Cells["A1"].Worksheet.MergedCells[0]);
+                FolderDepth = CountMergedCells(worksheet, worksheet.Cells["A1"].Worksheet.MergedCells[0]);
                 var usernames = GetUserList().ToList();
 
                 var fromRow = 3;
@@ -312,13 +312,13 @@ namespace SetACLs.Business
             }
         }
 
-        private int CountMergedCells(string cellsTemplate)
+        private int CountMergedCells(ExcelWorksheet worksheet, string cellsTemplate)
         {
-            var groups = Regex.Match(cellsTemplate, @"(\w+)\d+:(\w+)\d+").Groups;
-            var from = groups[1].Value[0];
-            var to = groups[2].Value[0];
+            var groups = Regex.Match(cellsTemplate, @"(\w+\d)+:(\w+\d+)").Groups;
+            var from = groups[1].Value;
+            var to = groups[2].Value;
 
-            return to - from + 1;
+            return worksheet.Cells[to].End.Column - worksheet.Cells[from].End.Column + 1;
         }
 
         private static void FormatExcelHeader(ExcelWorksheet ws)

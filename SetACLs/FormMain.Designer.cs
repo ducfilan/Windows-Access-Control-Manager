@@ -707,12 +707,6 @@ namespace SetACLs
 
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-            Text += string.Join("", new[] { " ", "|", " ", " ", "D", "u", "c",
-                " ", "F", "i", "l", "a", "n" });
-        }
 
         #endregion
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
