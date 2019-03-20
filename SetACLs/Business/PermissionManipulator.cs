@@ -14,13 +14,13 @@ namespace SetACLs.Business
     {
         private static readonly log4net.ILog Logger = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static AuthorizationRuleCollection GetDirectorySecurity(string path)
+        public static AuthorizationRuleCollection GetDirectorySecurity(string path, bool isIncludeInherited = true)
         {
             try
             {
                 return new DirectoryInfo(path)
                     .GetAccessControl()
-                    .GetAccessRules(true, true, typeof(NTAccount));
+                    .GetAccessRules(true, isIncludeInherited, typeof(NTAccount));
             }
             catch (UnauthorizedAccessException)
             {
@@ -95,21 +95,21 @@ namespace SetACLs.Business
             info.SetAccessControl(accessControl);
         }
 
-        public static IEnumerable<FileSystemAccessRule> GetPermissionsCurrentFolder(string path, string domain)
+        public static IEnumerable<FileSystemAccessRule> GetPermissionsCurrentFolder(string path, string domain, bool isIncludeInherited = true)
         {
-            return GetDirectorySecurity(path)?.Cast<FileSystemAccessRule>()
+            return GetDirectorySecurity(path, isIncludeInherited)?.Cast<FileSystemAccessRule>()
                 .Where(p => string.IsNullOrEmpty(domain) ||
                             p.IdentityReference.Value.StartsWith(domain + @"\", StringComparison.OrdinalIgnoreCase) ||
                             p.IdentityReference.Value.EndsWith("@" + domain, StringComparison.OrdinalIgnoreCase));
         }
 
-        public IEnumerable<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>> GetPermissionsSubFolders(string parentPath, string domain, bool isIncludeRootFolder = true)
+        public IEnumerable<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>> GetPermissionsSubFolders(string parentPath, string domain, bool isIncludeRootFolder = true, bool isIncludeInherited = true)
         {
             var allFoldersPermissions = new List<KeyValuePair<string, IEnumerable<FileSystemAccessRule>>>();
             if (isIncludeRootFolder)
             {
                 allFoldersPermissions.Add(new KeyValuePair<string, IEnumerable<FileSystemAccessRule>>(parentPath,
-                    GetPermissionsCurrentFolder(parentPath, domain)));
+                    GetPermissionsCurrentFolder(parentPath, domain, isIncludeInherited)));
             }
 
             foreach (var item in Directory.GetDirectories(parentPath)
@@ -117,7 +117,7 @@ namespace SetACLs.Business
             {
                 var subDirectory = item.SubDirectory;
 
-                var currentFolderPermissions = GetPermissionsCurrentFolder(subDirectory, domain);
+                var currentFolderPermissions = GetPermissionsCurrentFolder(subDirectory, domain, isIncludeInherited);
 
                 allFoldersPermissions.Add(new KeyValuePair<string, IEnumerable<FileSystemAccessRule>>(subDirectory, currentFolderPermissions));
                 allFoldersPermissions.AddRange(GetPermissionsSubFolders(subDirectory, domain, false));

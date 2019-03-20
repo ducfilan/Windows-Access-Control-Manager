@@ -84,7 +84,7 @@ namespace SetACLs.Business
                 progress?.Report(50);
 
                 var permissionsSubFolders = _permissionManipulator
-                    .GetPermissionsSubFolders(permissionToCheckRootPath, domain)
+                    .GetPermissionsSubFolders(permissionToCheckRootPath, domain, true, false)
                     .Select((p, i) => new { Index = i, Permissions = p })
                     .ToList();
 
@@ -345,7 +345,7 @@ namespace SetACLs.Business
         {
             return new ExportInfo
             {
-                Account = Regex.Replace(rule.IdentityReference.Value, @"^.*?[/\\]", string.Empty),
+                Account = (rule.IsInherited ? "(I) " : string.Empty) + Regex.Replace(rule.IdentityReference.Value, @"^.*?[/\\]", string.Empty),
                 Rights = (rule.FileSystemRights & Permissions.Instance.All["N"].Item1) == Permissions.Instance.All["N"].Item1 &&
                          rule.AccessControlType == AccessControlType.Deny ? "N" :
                     (rule.AccessControlType == AccessControlType.Allow ? string.Empty : "D") + 

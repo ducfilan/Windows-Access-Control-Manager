@@ -228,7 +228,7 @@ namespace SetACLs
                                       txtDomain.Text) 
 			                  ?? new List<FileSystemAccessRule>();
 
-			var list = new BindingList<ExportInfo>(permissions.Select(_toolBusiness.ToExportInfo).ToList());
+			var list = new BindingList<ExportInfo>(permissions.Select(_toolBusiness.ToExportInfo).OrderBy(i => i.Account).ToList());
 			dgvCurrentPermission.DataSource = list;
 		}
 
@@ -241,7 +241,7 @@ namespace SetACLs
                 {
                     Account = p.Username,
                     Rights = p.Permission
-                }).ToList());
+                }).OrderBy(i => i.Account).ToList());
             dgvImportedPermission.DataSource = list;
         }
 
