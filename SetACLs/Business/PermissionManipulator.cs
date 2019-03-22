@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using SetACLs.Const;
 using SetACLs.Model;
 
@@ -50,15 +51,52 @@ namespace SetACLs.Business
                         accessControlType));
                     info.SetAccessControl(accessControl);
                 }
-                catch(Exception exception)
+                catch (Exception exception)
                 {
                     Logger.Error(exception);
 
                     Logger.Info("Parameters:" +
-                                 " \n+ Username:   {" + username +
-                                 "}\n+ Permission: {" + permission.Permission +
-                                 "}\n+ Domain:     {" + domain +
-                                 "}\n+ Folder:     {" + folderPath + "}");
+                                " \n+ Username:   {" + username +
+                                "}\n+ Permission: {" + permission.Permission +
+                                "}\n+ Domain:     {" + domain +
+                                "}\n+ Folder:     {" + folderPath + "}");
+                }
+            }
+        }
+
+        public async Task AssignPermissionAsync(string folderPath, string domain, UserPermission permission)
+        {
+            foreach (var username in Regex.Split(permission.Username, "[;, ]").Where(p => !string.IsNullOrWhiteSpace(p)))
+            {
+                try
+                {
+                    var fileSystemRights = Permissions.Instance.All[permission.Permission].Item1;
+                    var accessControlType = Permissions.Instance.All[permission.Permission].Item2;
+
+                    var info = new DirectoryInfo(folderPath);
+
+                    await Task.Run(() =>
+                    {
+                        var accessControl = info.GetAccessControl();
+
+                        accessControl.AddAccessRule(new FileSystemAccessRule(
+                            domain + @"\" + username,
+                            fileSystemRights,
+                            InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+                            PropagationFlags.None,
+                            accessControlType));
+                        info.SetAccessControl(accessControl);
+                    });
+                }
+                catch (Exception exception)
+                {
+                    Logger.Error(exception);
+
+                    Logger.Info("Parameters:" +
+                                " \n+ Username:   {" + username +
+                                "}\n+ Permission: {" + permission.Permission +
+                                "}\n+ Domain:     {" + domain +
+                                "}\n+ Folder:     {" + folderPath + "}");
                 }
             }
         }

@@ -292,6 +292,19 @@ namespace SetACLs.Business
             }
         }
 
+        public async void SetIndividualPermissionAsync(string folderPath, string domain, FolderPermission permissions, bool isEvictCurrentPermissions = false)
+        {
+            if (isEvictCurrentPermissions)
+            {
+                _permissionManipulator.EvictAllRightsCurrentFolderFromDomainUsers(folderPath, domain);
+            }
+
+            foreach (var permission in permissions.UserPermission)
+            {
+                await _permissionManipulator.AssignPermissionAsync(folderPath, domain, permission);
+            }
+        }
+
         #region Private Methods
 
         private IEnumerable<string> GetUserList()

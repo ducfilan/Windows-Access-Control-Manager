@@ -70,27 +70,28 @@ namespace SetACLs
 
             _formManipulator.StartMarqueeProgressBarAsync(progressBar);
 
-			if (!Directory.Exists(folderPath))
+            if (!Directory.Exists(folderPath))
             {
                 _formManipulator.ShowError("Folder is not exists! Browse a new folder!");
                 return;
             }
 
             var rootDirectoryInfo = new DirectoryInfo(folderPath);
-            var nodes = await Task.Run(() => CreateDirectoryNode(rootDirectoryInfo));
-
-            BeginInvoke((MethodInvoker) delegate
-			{
-				treeView.Nodes.Clear();
-				treeView.Nodes.AddRange(nodes.Nodes.Cast<TreeNode>().ToArray());
-				treeView.ExpandAll();
-			});
+            var nodes = (await Task.Run(() => CreateDirectoryNode(rootDirectoryInfo)))
+                .Nodes.Cast<TreeNode>().ToArray();
 
             BeginInvoke((MethodInvoker)delegate
             {
-	            progressBar.Style = ProgressBarStyle.Blocks;
+                treeView.Nodes.Clear();
+                treeView.Nodes.AddRange(nodes);
+                treeView.ExpandAll();
             });
-		}
+
+            BeginInvoke((MethodInvoker)delegate
+            {
+                progressBar.Style = ProgressBarStyle.Blocks;
+            });
+        }
 
         private static async Task<TreeNode> CreateDirectoryNode(DirectoryInfo directoryInfo)
         {
@@ -122,11 +123,11 @@ namespace SetACLs
         private async void btnRefreshFolder_Click(object sender, EventArgs e)
         {
             await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, txtFolderPath.Text));
-		}
+        }
 
         private async void btnExportPermission_Click(object sender, EventArgs e)
         {
-	        if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+            if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
 
             progressBar.Value = 0;
             var progress = new Progress<int>(v =>
@@ -198,15 +199,15 @@ namespace SetACLs
 
         private void btnImportTemplate_Click(object sender, EventArgs e)
         {
-	        var templateTuple = _toolBusiness.ImportTemplate();
+            var templateTuple = _toolBusiness.ImportTemplate();
             ImportedRootNodeChildren = templateTuple.Item1;
             ImportedFolderPermissions = templateTuple.Item2;
 
             trvImportedDirectory.Nodes.Clear();
-	        trvImportedDirectory.Nodes.AddRange(ImportedRootNodeChildren
-		        .Cast<TreeNode>()
-		        .Select(node => node.Clone() as TreeNode)
-		        .ToArray());
+            trvImportedDirectory.Nodes.AddRange(ImportedRootNodeChildren
+                .Cast<TreeNode>()
+                .Select(node => node.Clone() as TreeNode)
+                .ToArray());
             trvImportedDirectory.ExpandAll();
         }
 
@@ -218,21 +219,21 @@ namespace SetACLs
             _toolBusiness.TemplatePath = openFileDialog.FileName;
 
             Properties.Settings.Default.Save();
-		}
+        }
 
-		private void trvFolderTree_AfterSelect(object sender, TreeViewEventArgs e)
-		{
-			var permissions = PermissionManipulator
-			                      .GetPermissionsCurrentFolder(
-                                      DirectoryInfoExtractor.GetBaseFolderPath(txtFolderPath.Text, !chkOnlySubFolder.Checked) + @"\" + e.Node.FullPath, 
-                                      txtDomain.Text) 
-			                  ?? new List<FileSystemAccessRule>();
+        private void trvFolderTree_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            var permissions = PermissionManipulator
+                                  .GetPermissionsCurrentFolder(
+                                      DirectoryInfoExtractor.GetBaseFolderPath(txtFolderPath.Text, !chkOnlySubFolder.Checked) + @"\" + e.Node.FullPath,
+                                      txtDomain.Text)
+                              ?? new List<FileSystemAccessRule>();
 
-			var list = new BindingList<ExportInfo>(permissions.Select(_toolBusiness.ToExportInfo).OrderBy(i => i.Account).ToList());
-			dgvCurrentPermission.DataSource = list;
-		}
+            var list = new BindingList<ExportInfo>(permissions.Select(_toolBusiness.ToExportInfo).OrderBy(i => i.Account).ToList());
+            dgvCurrentPermission.DataSource = list;
+        }
 
-		private void trvImportedDirectory_AfterSelect(object sender, TreeViewEventArgs e)
+        private void trvImportedDirectory_AfterSelect(object sender, TreeViewEventArgs e)
         {
             var list = new BindingList<ExportInfo>(ImportedFolderPermissions
                 .First(ifp => ifp.NodeKey.Equals(e.Node.Name))
@@ -245,38 +246,38 @@ namespace SetACLs
             dgvImportedPermission.DataSource = list;
         }
 
-		private async void BtnCreateFolderTree_Click(object sender, EventArgs e)
-		{
-			if (_formManipulator.ShowWarning("You're gonna create a folder tree based on the imported folder structure. Are you sure?") == 
+        private async void BtnCreateFolderTree_Click(object sender, EventArgs e)
+        {
+            if (_formManipulator.ShowWarning("You're gonna create a folder tree based on the imported folder structure. Are you sure?") ==
                 DialogResult.No) return;
 
             CreateFolder(DirectoryInfoExtractor.GetBaseFolderPath(txtFolderPath.Text, chkOnlySubFolder.Checked), trvImportedDirectory.Nodes);
 
-			await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, txtFolderPath.Text));
+            await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, txtFolderPath.Text));
 
             _formManipulator.ShowMessage("Folders have been created successfully!");
-		}
+        }
 
-		private void CreateFolder(string basePath, TreeNodeCollection nodes)
-		{
-			foreach (TreeNode node in nodes)
-			{
-				Directory.CreateDirectory(basePath + @"\" + node.Text);
-				CreateFolder(basePath + @"\" + node.Text, node.Nodes);
-			}
-		}
+        private void CreateFolder(string basePath, TreeNodeCollection nodes)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                Directory.CreateDirectory(basePath + @"\" + node.Text);
+                CreateFolder(basePath + @"\" + node.Text, node.Nodes);
+            }
+        }
 
-		private async void BtnAssignPermission_Click(object sender, EventArgs e)
-		{
-			if (_formManipulator.ShowWarning("You're gonna assign all permissions based on the imported template. Are you sure?") == 
+        private async void BtnAssignPermission_Click(object sender, EventArgs e)
+        {
+            if (_formManipulator.ShowWarning("You're gonna assign all permissions based on the imported template. Are you sure?") ==
                 DialogResult.No) return;
 
             Logger.Info("BEGIN SETTING ALL PERMISSIONS FROM TEMPLATE");
 
             if (ImportedRootNodeChildren == null)
-			{
-				_formManipulator.ShowMessage("Please import template first!");
-				return;
+            {
+                _formManipulator.ShowMessage("Please import template first!");
+                return;
             }
 
             _formManipulator.StartMarqueeProgressBar(progressBar);
@@ -291,18 +292,18 @@ namespace SetACLs
                         ImportedFolderPermissions));
 
                 _formManipulator.StopMarqueeProgressBar(progressBar);
-				_formManipulator.ShowInformation("Permissions are successfully set!");
-			}
-			catch(Exception ex)
+                _formManipulator.ShowInformation("Permissions are successfully set!");
+            }
+            catch (Exception ex)
             {
                 _formManipulator.ShowError(ex.Message);
-			}
-		}
+            }
+        }
 
-		private void BtnHelp_Click(object sender, EventArgs e)
-		{
-			_formManipulator.ShowInformation("Access rights manipulator by Duc Filan!");
-		}
+        private void BtnHelp_Click(object sender, EventArgs e)
+        {
+            _formManipulator.ShowInformation("Access rights manipulator by Duc Filan!");
+        }
 
         private void btnSetDomain_Click(object sender, EventArgs e)
         {
@@ -316,30 +317,32 @@ namespace SetACLs
             Properties.Settings.Default.Save();
         }
 
-        private void btnSaveCurrentPermission_Click(object sender, EventArgs e)
+        private async void btnSaveCurrentPermission_Click(object sender, EventArgs e)
         {
             if (_formManipulator.ShowWarning("You're gonna assign all permissions based on the edited values. Are you sure?") ==
                 DialogResult.No) return;
 
-            var editedDataSource = dgvCurrentPermission.DataSource as BindingList<ExportInfo>;
-            if (editedDataSource == null) return;
+            var editedDataSource = dgvCurrentPermission.DataSource as BindingList<ExportInfo> ?? new BindingList<ExportInfo>();
 
             var permissions = new FolderPermission
             {
                 NodeKey = string.Empty, // Not important here.
-                UserPermission = editedDataSource.Select(ei => new UserPermission
-                {
-                    Permission = ei.Rights,
-                    Username = ei.Account
-                }).ToList()
+                UserPermission = editedDataSource
+                    .Where(ei => !ei.Account.StartsWith("(I)"))
+                    .Select(ei => new UserPermission
+                    {
+                        Permission = ei.Rights,
+                        Username = ei.Account
+                    }).ToList()
             };
 
             try
             {
-                _toolBusiness.SetIndividualPermission(
+                await Task.Run(() => _toolBusiness.SetIndividualPermissionAsync(
                     txtFolderPath.Text + @"\" + trvFolderTree.SelectedNode.FullPath,
-                    txtDomain.Text, 
-                    permissions);
+                    txtDomain.Text,
+                    permissions,
+                    true));
 
                 _formManipulator.ShowInformation("Permissions are successfully set!");
             }
@@ -351,7 +354,7 @@ namespace SetACLs
 
         private void chkOnlySubFolder_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.IsSubFolderOnly = ((CheckBox) sender).Checked;
+            Properties.Settings.Default.IsSubFolderOnly = ((CheckBox)sender).Checked;
             Properties.Settings.Default.Save();
         }
 
