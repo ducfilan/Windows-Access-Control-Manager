@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Windows.Forms;
 using SetACLs.Business;
 using SetACLs.Model;
 using System.Threading.Tasks;
+using Alphaleonis.Win32.Filesystem;
 using RoboSharp;
 
 namespace SetACLs
@@ -100,7 +100,7 @@ namespace SetACLs
             try
             {
                 foreach (var directory in directoryInfo.GetDirectories()
-                    .Where(d => !d.Attributes.HasFlag(FileAttributes.Hidden)))
+                    .Where(d => !d.Attributes.HasFlag(System.IO.FileAttributes.Hidden)))
                     directoryNode.Nodes.Add(await Task.Run(() => CreateDirectoryNode(directory)));
 
                 foreach (var file in directoryInfo.GetFiles())
@@ -339,11 +339,12 @@ namespace SetACLs
 
             try
             {
-                await Task.Run(() => _toolBusiness.SetIndividualPermissionAsync(
-                    txtFolderPath.Text + @"\" + trvFolderTree.SelectedNode.FullPath,
+                var selectedNodeFullPath = trvFolderTree.SelectedNode.FullPath;
+                await _toolBusiness.SetIndividualPermissionAsync(
+                    txtFolderPath.Text + @"\" + selectedNodeFullPath,
                     txtDomain.Text,
                     permissions,
-                    true));
+                    true);
 
                 _formManipulator.ShowInformation("Permissions are successfully set!");
             }

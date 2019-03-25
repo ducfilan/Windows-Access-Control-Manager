@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using SetACLs.Const;
@@ -67,7 +67,7 @@ namespace SetACLs.Business
                 FormatExcelHeader(ws);
                 progress?.Report(100);
 
-                excel.SaveAs(new FileInfo(fileNameFullPath));
+                excel.SaveAs(new System.IO.FileInfo(fileNameFullPath));
             }
         }
 
@@ -78,7 +78,7 @@ namespace SetACLs.Business
 
             var userList = new Dictionary<string, int>();
 
-            using (var excel = new ExcelPackage(new FileInfo(blankTemplateFileName)))
+            using (var excel = new ExcelPackage(new System.IO.FileInfo(blankTemplateFileName)))
             {
                 var worksheet = excel.Workbook.Worksheets[templateSheetName];
 
@@ -147,7 +147,7 @@ namespace SetACLs.Business
                 worksheet.Cells.AutoFitColumns();
                 progress?.Report(100);
 
-                excel.SaveAs(new FileInfo(fileNameFullPath));
+                excel.SaveAs(new System.IO.FileInfo(fileNameFullPath));
             }
         }
 
@@ -195,7 +195,7 @@ namespace SetACLs.Business
 
             var rootTreeNode = new TreeNode();
 
-            using (var excel = new ExcelPackage(new FileInfo(TemplatePath)))
+            using (var excel = new ExcelPackage(new System.IO.FileInfo(TemplatePath)))
             {
                 var worksheet = excel.Workbook.Worksheets[Properties.Settings.Default.TemplateSheetName];
                 FolderDepth = CountMergedCells(worksheet, worksheet.Cells["A1"].Worksheet.MergedCells[0]);
@@ -296,7 +296,7 @@ namespace SetACLs.Business
             }
         }
 
-        public async void SetIndividualPermissionAsync(string folderPath, string domain, FolderPermission permissions, bool isEvictCurrentPermissions = false)
+        public async Task SetIndividualPermissionAsync(string folderPath, string domain, FolderPermission permissions, bool isEvictCurrentPermissions = false)
         {
             if (isEvictCurrentPermissions)
             {
@@ -313,7 +313,7 @@ namespace SetACLs.Business
 
         private IEnumerable<string> GetUserList()
         {
-            using (var excel = new ExcelPackage(new FileInfo(TemplatePath)))
+            using (var excel = new ExcelPackage(new System.IO.FileInfo(TemplatePath)))
             {
                 var worksheet = excel.Workbook.Worksheets[Properties.Settings.Default.TemplateSheetName];
                 const int row = 2;
