@@ -56,7 +56,8 @@ namespace SetACLs.Business
 
                     FillFolderSize(ws, "B", rowToFillFolderInfo, item.Permissions.Key);
 
-                    ws.Cells["C" + (item.Index + addedRowsCountToPrint)].LoadFromCollection(item.Permissions.Value.Select(ToExportInfo), !isHeaderPrinted);
+                    ws.Cells["C" + (item.Index + addedRowsCountToPrint)]
+                        .LoadFromCollection(item.Permissions.Value.Select(ToExportInfo), !isHeaderPrinted);
                     addedRowsCountToPrint += item.Permissions.Value.Count() + (isHeaderPrinted ? 0 : 1);
 
                     isHeaderPrinted = true;
@@ -260,9 +261,11 @@ namespace SetACLs.Business
             }
         }
 
-        public void ApplyPermissionFromImportedTemplate(string path, string domain, TreeNodeCollection importedRootNodeChildren,
+        public List<Task> ApplyPermissionFromImportedTemplate(string path, string domain, TreeNodeCollection importedRootNodeChildren,
 			List<FolderPermission> importedFolderPermissions)
         {
+            var applyPermissionTasks = new List<Task>();
+            
             foreach (TreeNode node in importedRootNodeChildren)
 			{
 				var currentFolderPermissions = importedFolderPermissions.First(p => p.NodeKey == node.Name);
@@ -273,11 +276,12 @@ namespace SetACLs.Business
                     Logger.Error("Folder is not exists: {" + subFolder + "}");
                     continue;
                 }
-
-                Task.Run(() => SetIndividualPermission(subFolder, domain, currentFolderPermissions, true));
-
-				ApplyPermissionFromImportedTemplate(subFolder, domain, node.Nodes, importedFolderPermissions);
+                
+                applyPermissionTasks.Add(Task.Run(() => SetIndividualPermission(subFolder, domain, currentFolderPermissions, true)));
+                applyPermissionTasks.AddRange(ApplyPermissionFromImportedTemplate(subFolder, domain, node.Nodes, importedFolderPermissions));
 			}
+
+            return applyPermissionTasks;
         }
 
         public void SetIndividualPermission(string folderPath, string domain, FolderPermission permissions, bool isEvictCurrentPermissions = false)

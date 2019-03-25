@@ -229,7 +229,7 @@ namespace SetACLs
                                       txtDomain.Text)
                               ?? new List<FileSystemAccessRule>();
 
-            var list = new BindingList<ExportInfo>(permissions.Select(_toolBusiness.ToExportInfo).OrderBy(i => i.Account).ToList());
+            var list = new BindingList<ExportInfo>(permissions.Select(p => _toolBusiness.ToExportInfo(p)).OrderBy(i => i.Account).ToList());
             dgvCurrentPermission.DataSource = list;
         }
 
@@ -284,12 +284,13 @@ namespace SetACLs
 
             try
             {
-                await Task.Run(() =>
-                    _toolBusiness.ApplyPermissionFromImportedTemplate(
-                        DirectoryInfoExtractor.GetBaseFolderPath(txtFolderPath.Text),
-                        txtDomain.Text,
-                        ImportedRootNodeChildren,
-                        ImportedFolderPermissions));
+                var tasks = _toolBusiness.ApplyPermissionFromImportedTemplate(
+                    DirectoryInfoExtractor.GetBaseFolderPath(txtFolderPath.Text),
+                    txtDomain.Text,
+                    ImportedRootNodeChildren,
+                    ImportedFolderPermissions);
+
+                await Task.WhenAll(tasks);
 
                 _formManipulator.StopMarqueeProgressBar(progressBar);
                 _formManipulator.ShowInformation("Permissions are successfully set!");

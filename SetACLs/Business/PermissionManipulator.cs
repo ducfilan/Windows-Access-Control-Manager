@@ -158,7 +158,7 @@ namespace SetACLs.Business
                 var currentFolderPermissions = GetPermissionsCurrentFolder(subDirectory, domain, isIncludeInherited);
 
                 allFoldersPermissions.Add(new KeyValuePair<string, IEnumerable<FileSystemAccessRule>>(subDirectory, currentFolderPermissions));
-                allFoldersPermissions.AddRange(GetPermissionsSubFolders(subDirectory, domain, false));
+                allFoldersPermissions.AddRange(GetPermissionsSubFolders(subDirectory, domain, false, isIncludeInherited));
             }
 
             return allFoldersPermissions;
