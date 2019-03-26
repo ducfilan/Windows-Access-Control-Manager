@@ -63,9 +63,9 @@ namespace SetACLs
             this.txtFolderPath = new System.Windows.Forms.TextBox();
             this.btnImportTemplate = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.grbImportedPermissions = new System.Windows.Forms.GroupBox();
             this.dgvImportedPermission = new System.Windows.Forms.DataGridView();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.grbCurrentPermissions = new System.Windows.Forms.GroupBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dgvCurrentPermission = new System.Windows.Forms.DataGridView();
             this.btnSaveCurrentPermission = new System.Windows.Forms.Button();
@@ -82,9 +82,9 @@ namespace SetACLs
             this.groupBox5.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            this.groupBox4.SuspendLayout();
+            this.grbImportedPermissions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvImportedPermission)).BeginInit();
-            this.groupBox3.SuspendLayout();
+            this.grbCurrentPermissions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -148,7 +148,7 @@ namespace SetACLs
             // 
             // groupBox5
             // 
-            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox5.Controls.Add(this.txtCopyProcessingFileSize);
             this.groupBox5.Controls.Add(this.label8);
@@ -165,7 +165,7 @@ namespace SetACLs
             // 
             // txtCopyProcessingFileSize
             // 
-            this.txtCopyProcessingFileSize.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.txtCopyProcessingFileSize.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCopyProcessingFileSize.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtCopyProcessingFileSize.Location = new System.Drawing.Point(102, 70);
@@ -185,7 +185,7 @@ namespace SetACLs
             // 
             // txtCopyProcessingFileName
             // 
-            this.txtCopyProcessingFileName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.txtCopyProcessingFileName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCopyProcessingFileName.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtCopyProcessingFileName.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -206,7 +206,7 @@ namespace SetACLs
             // 
             // txtCopyProcessingOperation
             // 
-            this.txtCopyProcessingOperation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.txtCopyProcessingOperation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCopyProcessingOperation.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtCopyProcessingOperation.Location = new System.Drawing.Point(102, 24);
@@ -249,7 +249,7 @@ namespace SetACLs
             // 
             // txtCopyDestinationFolderPath
             // 
-            this.txtCopyDestinationFolderPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.txtCopyDestinationFolderPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCopyDestinationFolderPath.Location = new System.Drawing.Point(75, 35);
             this.txtCopyDestinationFolderPath.Name = "txtCopyDestinationFolderPath";
@@ -258,7 +258,7 @@ namespace SetACLs
             // 
             // txtCopySourceFolderPath
             // 
-            this.txtCopySourceFolderPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.txtCopySourceFolderPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCopySourceFolderPath.Location = new System.Drawing.Point(75, 8);
             this.txtCopySourceFolderPath.Name = "txtCopySourceFolderPath";
@@ -482,16 +482,16 @@ namespace SetACLs
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 4;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel1.Controls.Add(this.groupBox4, 3, 0);
-            this.tableLayoutPanel1.Controls.Add(this.groupBox3, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.grbImportedPermissions, 3, 0);
+            this.tableLayoutPanel1.Controls.Add(this.grbCurrentPermissions, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.groupBox2, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.groupBox1, 0, 0);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(5, 62);
@@ -501,16 +501,16 @@ namespace SetACLs
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1168, 284);
             this.tableLayoutPanel1.TabIndex = 33;
             // 
-            // groupBox4
+            // grbImportedPermissions
             // 
-            this.groupBox4.Controls.Add(this.dgvImportedPermission);
-            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox4.Location = new System.Drawing.Point(879, 3);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(286, 278);
-            this.groupBox4.TabIndex = 5;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Imported Permission";
+            this.grbImportedPermissions.Controls.Add(this.dgvImportedPermission);
+            this.grbImportedPermissions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grbImportedPermissions.Location = new System.Drawing.Point(879, 3);
+            this.grbImportedPermissions.Name = "grbImportedPermissions";
+            this.grbImportedPermissions.Size = new System.Drawing.Size(286, 278);
+            this.grbImportedPermissions.TabIndex = 5;
+            this.grbImportedPermissions.TabStop = false;
+            this.grbImportedPermissions.Text = "Imported Permissions";
             // 
             // dgvImportedPermission
             // 
@@ -526,16 +526,16 @@ namespace SetACLs
             this.dgvImportedPermission.Size = new System.Drawing.Size(280, 260);
             this.dgvImportedPermission.TabIndex = 1;
             // 
-            // groupBox3
+            // grbCurrentPermissions
             // 
-            this.groupBox3.Controls.Add(this.splitContainer1);
-            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox3.Location = new System.Drawing.Point(587, 3);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(286, 278);
-            this.groupBox3.TabIndex = 4;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Current Permission";
+            this.grbCurrentPermissions.Controls.Add(this.splitContainer1);
+            this.grbCurrentPermissions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grbCurrentPermissions.Location = new System.Drawing.Point(587, 3);
+            this.grbCurrentPermissions.Name = "grbCurrentPermissions";
+            this.grbCurrentPermissions.Size = new System.Drawing.Size(286, 278);
+            this.grbCurrentPermissions.TabIndex = 4;
+            this.grbCurrentPermissions.TabStop = false;
+            this.grbCurrentPermissions.Text = "Current Permissions";
             // 
             // splitContainer1
             // 
@@ -639,7 +639,7 @@ namespace SetACLs
             this.btnRefreshFolder.Name = "btnRefreshFolder";
             this.btnRefreshFolder.Size = new System.Drawing.Size(119, 23);
             this.btnRefreshFolder.TabIndex = 30;
-            this.btnRefreshFolder.Text = "Refresh";
+            this.btnRefreshFolder.Text = "Load folder tree";
             this.btnRefreshFolder.UseVisualStyleBackColor = true;
             this.btnRefreshFolder.Click += new System.EventHandler(this.btnRefreshFolder_Click);
             // 
@@ -692,9 +692,9 @@ namespace SetACLs
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.groupBox4.ResumeLayout(false);
+            this.grbImportedPermissions.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvImportedPermission)).EndInit();
-            this.groupBox3.ResumeLayout(false);
+            this.grbCurrentPermissions.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -731,9 +731,9 @@ namespace SetACLs
         private System.Windows.Forms.TextBox txtFolderPath;
         private System.Windows.Forms.Button btnImportTemplate;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.GroupBox grbImportedPermissions;
         private System.Windows.Forms.DataGridView dgvImportedPermission;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox grbCurrentPermissions;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.DataGridView dgvCurrentPermission;
         private System.Windows.Forms.Button btnSaveCurrentPermission;

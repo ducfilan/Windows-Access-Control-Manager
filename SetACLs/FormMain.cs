@@ -28,13 +28,13 @@ namespace SetACLs
             InitializeComponent();
         }
 
-        private async void FormMain_Load(object sender, EventArgs e)
+        private void FormMain_Load(object sender, EventArgs e)
         {
 
             if (!StartAsAdminManipulator.IsAdmin())
             {
-                StartAsAdminManipulator.RestartElevated();
-                return;
+//                StartAsAdminManipulator.RestartElevated();
+//                return;
             }
 
             txtFolderPath.Text = Properties.Settings.Default.FolderPath;
@@ -51,8 +51,6 @@ namespace SetACLs
 
             var ipAddresses = NetworkInfoExtractor.GetLocalIpAddress();
             PopulateComboBox(cbIpAddresses, ipAddresses, Properties.Settings.Default.IpAddress);
-
-            await Task.Run(() => PopulateFolderTreeAsync(trvFolderTree, txtFolderPath.Text));
         }
 
         private async void btnBrowseFolder_Click(object sender, EventArgs e)
@@ -73,6 +71,8 @@ namespace SetACLs
             if (!Directory.Exists(folderPath))
             {
                 _formManipulator.ShowError("Folder is not exists! Browse a new folder!");
+                BeginInvoke((MethodInvoker)(() => progressBar.Style = ProgressBarStyle.Blocks));
+
                 return;
             }
 
@@ -87,10 +87,7 @@ namespace SetACLs
                 treeView.ExpandAll();
             });
 
-            BeginInvoke((MethodInvoker)delegate
-            {
-                progressBar.Style = ProgressBarStyle.Blocks;
-            });
+            BeginInvoke((MethodInvoker)(() => progressBar.Style = ProgressBarStyle.Blocks));
         }
 
         private static async Task<TreeNode> CreateDirectoryNode(DirectoryInfo directoryInfo)
@@ -223,6 +220,8 @@ namespace SetACLs
 
         private void trvFolderTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            grbCurrentPermissions.Text = @"Current Permissions: " + e.Node.Text;
+
             var permissions = PermissionManipulator
                                   .GetPermissionsCurrentFolder(
                                       DirectoryInfoExtractor.GetBaseFolderPath(txtFolderPath.Text, !chkOnlySubFolder.Checked) + @"\" + e.Node.FullPath,
@@ -235,6 +234,8 @@ namespace SetACLs
 
         private void trvImportedDirectory_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            grbImportedPermissions.Text = @"Imported Permissions: " + e.Node.Text;
+
             var list = new BindingList<ExportInfo>(ImportedFolderPermissions
                 .First(ifp => ifp.NodeKey.Equals(e.Node.Name))
                 .UserPermission

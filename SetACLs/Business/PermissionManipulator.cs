@@ -130,7 +130,14 @@ namespace SetACLs.Business
                 accessControl.SetAccessRuleProtection(true, true);
             }
 
-            info.SetAccessControl(accessControl);
+            try
+            {
+                info.SetAccessControl(accessControl);
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Set permission error", e);
+            }
         }
 
         public static IEnumerable<FileSystemAccessRule> GetPermissionsCurrentFolder(string path, string domain, bool isIncludeInherited = true)
