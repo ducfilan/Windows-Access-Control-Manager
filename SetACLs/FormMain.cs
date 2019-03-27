@@ -33,8 +33,10 @@ namespace SetACLs
 
             if (!StartAsAdminManipulator.IsAdmin())
             {
-//                StartAsAdminManipulator.RestartElevated();
-//                return;
+#if !DEBUG
+                StartAsAdminManipulator.RestartElevated();
+                return;
+#endif
             }
 
             txtFolderPath.Text = Properties.Settings.Default.FolderPath;

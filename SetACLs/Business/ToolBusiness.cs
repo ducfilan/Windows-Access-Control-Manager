@@ -367,8 +367,9 @@ namespace SetACLs.Business
                          rule.AccessControlType == AccessControlType.Deny ? "N" :
                     (rule.AccessControlType == AccessControlType.Allow ? string.Empty : "D") + 
                     (
-                        (rule.FileSystemRights & Permissions.Instance.All["M"].Item1) == Permissions.Instance.All["M"].Item1 ? "M" : 
-                        (rule.FileSystemRights & Permissions.Instance.All["R"].Item1) == Permissions.Instance.All["R"].Item1 ? "R" : "N/A"
+                        rule.FileSystemRights.HasFlag(Permissions.Instance.All["M"].Item1) ? "M" :
+                        rule.FileSystemRights.HasFlag(Permissions.Instance.All["R"].Item1) ? "R" : 
+                        rule.FileSystemRights.HasFlag(Permissions.Instance.All["L"].Item1) ? "L" : "N/A"
                     )
             };
         }

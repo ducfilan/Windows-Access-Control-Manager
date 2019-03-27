@@ -11,6 +11,7 @@ namespace SetACLs.Const
 
 		public Dictionary<string, Tuple<FileSystemRights, AccessControlType>> All = new Dictionary<string, Tuple<FileSystemRights, AccessControlType>>
 		{
+			{ "L", new Tuple<FileSystemRights, AccessControlType>(FileSystemRights.ListDirectory, AccessControlType.Allow) },
 			{ "R", new Tuple<FileSystemRights, AccessControlType>(FileSystemRights.ReadAndExecute, AccessControlType.Allow) },
 			{ "M", new Tuple<FileSystemRights, AccessControlType>(FileSystemRights.Modify, AccessControlType.Allow) },
 			{ "DM", new Tuple<FileSystemRights, AccessControlType>(FileSystemRights.Modify, AccessControlType.Deny) },
