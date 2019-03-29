@@ -9,14 +9,20 @@ namespace SetACLs.Const
 	{
 		private Permissions(){}
 
-		public Dictionary<string, Tuple<FileSystemRights, AccessControlType>> All = new Dictionary<string, Tuple<FileSystemRights, AccessControlType>>
+		public Dictionary<string, Tuple<FileSystemRights, AccessControlType, InheritanceFlags>> All = new Dictionary<string, Tuple<FileSystemRights, AccessControlType, InheritanceFlags>>
 		{
-			{ "L", new Tuple<FileSystemRights, AccessControlType>(FileSystemRights.ListDirectory, AccessControlType.Allow) },
-			{ "R", new Tuple<FileSystemRights, AccessControlType>(FileSystemRights.ReadAndExecute, AccessControlType.Allow) },
-			{ "M", new Tuple<FileSystemRights, AccessControlType>(FileSystemRights.Modify, AccessControlType.Allow) },
-			{ "DM", new Tuple<FileSystemRights, AccessControlType>(FileSystemRights.Modify, AccessControlType.Deny) },
-			{ "DR", new Tuple<FileSystemRights, AccessControlType>(FileSystemRights.ReadAndExecute, AccessControlType.Deny) },
-			{ "N", new Tuple<FileSystemRights, AccessControlType>(FileSystemRights.Modify | FileSystemRights.ReadAndExecute, AccessControlType.Deny) }
+			{ "L", new Tuple<FileSystemRights, AccessControlType, InheritanceFlags>
+                (FileSystemRights.ReadAndExecute, AccessControlType.Allow, InheritanceFlags.ContainerInherit) },
+			{ "R", new Tuple<FileSystemRights, AccessControlType, InheritanceFlags>
+                (FileSystemRights.ReadAndExecute, AccessControlType.Allow, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit) },
+			{ "M", new Tuple<FileSystemRights, AccessControlType, InheritanceFlags>
+                (FileSystemRights.Modify, AccessControlType.Allow, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit) },
+			{ "DM", new Tuple<FileSystemRights, AccessControlType, InheritanceFlags>
+                (FileSystemRights.Modify, AccessControlType.Deny, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit) },
+			{ "DR", new Tuple<FileSystemRights, AccessControlType, InheritanceFlags>
+                (FileSystemRights.ReadAndExecute, AccessControlType.Deny, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit) },
+			{ "N", new Tuple<FileSystemRights, AccessControlType, InheritanceFlags>
+                (FileSystemRights.Modify | FileSystemRights.ReadAndExecute, AccessControlType.Deny, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit) }
 		};
 	}
 }

@@ -368,8 +368,8 @@ namespace SetACLs.Business
                     (rule.AccessControlType == AccessControlType.Allow ? string.Empty : "D") + 
                     (
                         rule.FileSystemRights.HasFlag(Permissions.Instance.All["M"].Item1) ? "M" :
-                        rule.FileSystemRights.HasFlag(Permissions.Instance.All["R"].Item1) ? "R" : 
-                        rule.FileSystemRights.HasFlag(Permissions.Instance.All["L"].Item1) ? "L" : "N/A"
+                        rule.FileSystemRights.HasFlag(Permissions.Instance.All["L"].Item1) && !rule.InheritanceFlags.HasFlag(InheritanceFlags.ObjectInherit) ? "L" : 
+                        rule.FileSystemRights.HasFlag(Permissions.Instance.All["R"].Item1) ? "R" : "N/A"
                     )
             };
         }

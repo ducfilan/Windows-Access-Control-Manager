@@ -37,8 +37,9 @@ namespace SetACLs.Business
             {
                 try
                 {
-                    var fileSystemRights = Permissions.Instance.All[permission.Permission].Item1;
+                    var fileSystemRights  = Permissions.Instance.All[permission.Permission].Item1;
                     var accessControlType = Permissions.Instance.All[permission.Permission].Item2;
+                    var inheritanceFlags  = Permissions.Instance.All[permission.Permission].Item3;
 
                     var info = new DirectoryInfo(folderPath);
                     var accessControl = info.GetAccessControl();
@@ -46,9 +47,10 @@ namespace SetACLs.Business
                     accessControl.AddAccessRule(new FileSystemAccessRule(
                         domain + @"\" + username,
                         fileSystemRights,
-                        InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+                        inheritanceFlags,
                         PropagationFlags.None,
                         accessControlType));
+
                     info.SetAccessControl(accessControl);
                 }
                 catch (Exception exception)
