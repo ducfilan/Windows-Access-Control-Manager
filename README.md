@@ -8,6 +8,7 @@ Access Control Manager (Permission) In Windows
  - Export current permissions of a folder structure in detail to an excel file
  - Create folder structure based on a template file
  - Set permissions to a folder structure by an excel template
+ - Set permissions directly from the app
 
 *Folder structure and permissions are managed in an excel file, the structure of the template is located in this file:*
 https://github.com/ducfilan/Windows-Access-Control-Manager/blob/master/Template.xlsx
